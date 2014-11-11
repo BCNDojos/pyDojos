@@ -1,3 +1,5 @@
 class StringCalculator(object):
     def Add(self, operands):
-        return len(operands)
+        if len(operands) == 0:
+          return len(operands)
+        return int(operands)
