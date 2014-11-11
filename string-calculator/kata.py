@@ -1,8 +1,7 @@
 class StringCalculator(object):
-    def Add(self, operands):
-        if len(operands) == 0:
-            return len(operands)
-        n = operands.split(',')
-        if len(n) == 1:
-            return int(n[0])
-        return int(n[0]) + int(n[1])
+  def Add(self, operands):
+    n = 0
+    for x in operands.split(','):
+      if len(x) > 0:
+        n += int(x)
+    return n
