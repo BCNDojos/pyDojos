@@ -20,5 +20,8 @@ class TestKata(unittest.TestCase):
     self.assertEqual(self.calc.Add("1\n2"), 3)
     self.assertEqual(self.calc.Add("1\n2,3"), 6)
 
+  def test_delimiter_choice(self):
+    self.assertEqual(self.calc.Add("//;\n1;2,3\n4"), 10)
+
 if __name__ == '__main__':
   unittest.main()
