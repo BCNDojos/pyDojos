@@ -18,12 +18,17 @@ En este caso, para la realización de la kata, será necesario disponer de la li
 Primera fase
 ------------
 
-El objetivo de esta primera fase es crear un nuevo programa que, utilizando la clase StringCalculator, permitirá al usuario invocarlo con los dígitos desde la línea de comandos.
+El objetivo de esta primera fase es crear un nuevo programa que, utilizando la clase StringCalculator, permitirá al usuario invocarlo con los dígitos desde la línea de comandos, de la siguiente forma: ::
+
+    stringcal "12,4,5"
 
 Segunda fase
 ------------
 
-En la segunda fase, el programa responderá al usuario imprimiendo la suma, el resultado, por la pantalla.
+En la segunda fase, el programa responderá al usuario imprimiendo la suma, el resultado, por la pantalla: ::
+
+   stringcal "12,4,5"
+   21
 
 Tercera fase
 ------------
