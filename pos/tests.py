@@ -23,6 +23,11 @@ class TestKata(unittest.TestCase):
         self.warehouse.check_stock.assert_called_with("Product A")
         self.assertEqual(result, "KO")
 
+    def test_not_in_wh(self):
+        self.warehouse.check_exists.return_value = False
+        result = self.tpv.buy("Product B", 25)
+        self.assertEqual(result, "KO")
+
 
 
 
