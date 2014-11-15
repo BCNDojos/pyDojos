@@ -16,6 +16,11 @@ class TestKata(unittest.TestCase):
     self.assertEqual(self.calc.Add("1,2"), 3)
     self.assertEqual(self.calc.Add("1,2,3"), 6)
 
+  def test_n_digit_operands(self):
+    self.assertEqual(self.calc.Add("12,3"), 15)
+    self.assertEqual(self.calc.Add("21,42"), 63)
+    self.assertEqual(self.calc.Add("123,12345"), 12468)
+
   def test_delimiter_newline(self):
     self.assertEqual(self.calc.Add("1\n2"), 3)
     self.assertEqual(self.calc.Add("1\n2,3"), 6)

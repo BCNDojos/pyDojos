@@ -1,6 +1,6 @@
 class StringCalculator(object):
   def Add(self, operands):
-    delimiter = ''
+    delimiter = ','
     first_line = operands.split('\n')[0]
     if first_line.startswith('//'):
       delimiter = first_line.split('//')[1]
