@@ -2,7 +2,7 @@
 pyDojos
 =======
 
-Éstos son los dojos realizados con la comunidad [pybcn] en Barcelona. Cada dojo realizado se almacena separadamente en su directorio, identificado por la fecha.
+Éstos son los dojos realizados con la comunidad [pybcn] en Barcelona. Cada dojo realizado se almacena separadamente en su directorio.
 
 Participantes
 =============
