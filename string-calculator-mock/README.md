@@ -6,7 +6,7 @@ Introducción
 
 En esta kata, partiremos de otra kata ya resuelta sobre la que desarrollaremos algunas funcionalidades nuevas que nos obligarán a utilizar *mocking* para que los tests puedan comprobarlo.
 
-Dado que *mocking* es un concepto un poco confuso, la kata consistirá de tres fases. En la primera se hará un ejemplo del uso de `mock` para crear un falso recurso a utilizar. Esta primera fase, además servirá de base para ejemplificar la diferencia entre un *mock* y un *stub*.
+Dado que *mocking* es un concepto un poco confuso, la kata consistirá de tres fases. En la primera se hará un ejemplo del uso de `mock` para crear un falso recurso a utilizar.
 
 Requerimientos
 --------------
@@ -18,12 +18,17 @@ En este caso, para la realización de la kata, será necesario disponer de la li
 Primera fase
 ------------
 
-El objetivo de esta primera fase es crear un nuevo programa que, utilizando la clase StringCalculator, permitirá al usuario invocarlo con los dígitos desde la línea de comandos.
+El objetivo de esta primera fase es crear un nuevo programa que, utilizando la clase StringCalculator, permitirá al usuario invocarlo con los dígitos desde la línea de comandos, de la siguiente forma: ::
+
+    stringcal "12,4,5"
 
 Segunda fase
 ------------
 
-En la segunda fase, el programa responderá al usuario imprimiendo la suma, el resultado, por la pantalla.
+En la segunda fase, el programa responderá al usuario imprimiendo la suma, el resultado, por la pantalla: ::
+
+   stringcal "12,4,5"
+   21
 
 Tercera fase
 ------------
