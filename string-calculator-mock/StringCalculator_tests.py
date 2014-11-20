@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from kata import *
+from StringCalculator import *
 
 class TestKata(unittest.TestCase):
   def setUp(self):
