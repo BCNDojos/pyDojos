@@ -1,2 +1,2 @@
 def anagramize(word):
-    pass
+    return ['']
