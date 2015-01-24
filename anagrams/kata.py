@@ -2,12 +2,15 @@ from math import factorial
 from random import shuffle
 
 def anagramize(word):
-    anagrams = []    
-    if len(word)<=1:
-        anagrams = [word]
-    else:
-        for i,char in enumerate(word):
-            for perm in anagramize(word[:i]+word[i+1:]):
-                anagrams += [char + perm]
+    anagrams = [word]
+    if len(word) > 1:
+        anagrams = [i for i in get_anagram(word)]
     return anagrams
 
+def get_anagram(word):
+    if len(word) ==1:
+        yield word
+    else:
+        for perm in anagramize(word[1:]):
+            for i in range(len(word)):
+                yield perm[:i] + word[0:1] + perm[i:]
