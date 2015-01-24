@@ -15,7 +15,7 @@ class TestAnagrams(unittest.TestCase):
 
      def test_variable_length_anagram(self):
          alphabet = string.ascii_lowercase
-         length = randint(3,7)
+         length = randint(3,9)
          word = ''.join(sample(alphabet, length))
          anagrams_length = factorial(length)
          anagrams = anagramize(word)
