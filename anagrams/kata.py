@@ -2,12 +2,12 @@ from math import factorial
 from random import shuffle
 
 def anagramize(word):
-    anagrams = [word]
-    while len(anagrams) < factorial(len(word)):
-        letters = list(word)
-        shuffle(letters)
-        anagram = ''.join(letters)
-        if not anagram in anagrams:
-            anagrams.append(anagram)
+    anagrams = []    
+    if len(word)<=1:
+        anagrams = [word]
+    else:
+        for i,char in enumerate(word):
+            for perm in anagramize(word[:i]+word[i+1:]):
+                anagrams += [char + perm]
     return anagrams
 
