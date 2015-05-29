@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib as plt
 
 def create_world(alive = None):
     world = np.zeros((3,3), dtype=int)
