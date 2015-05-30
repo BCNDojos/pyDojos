@@ -37,6 +37,41 @@ class TestEndToEnd(unittest.TestCase):
 		self.assertTrue((gol.evolve(w1) != w2).sum()==0)
 		self.assertTrue((gol.evolve(w2) != w1).sum() ==0)
 
+	def test_de_cuatro_estable(self):
+
+		w1 = g.create_world(
+			alive=([(1,1),(1,2),(2,1),(2,2)]),
+			MAX=4
+		)
+
+		w2 = gol.evolve(w1)
+		self.assertTrue((w2 != w1).sum()==0)
+
+	def test_beacon_de_6(self):
+
+		w1 = g.create_world(
+			alive=(
+				[
+					(1,1),(1,2),(2,1),(2,2),
+					(3,3),(3,4),(4,3),(4,4)
+				]),
+			MAX=6
+		)
+
+		w2 = gol.evolve(w1)
+
+		w2_ref = g.create_world(
+			alive=(
+				[
+					(1,1),(1,2),(2,1),
+					(3,4),(4,3),(4,4)
+				]),
+			MAX=6
+		)
+		self.assertTrue((w2 != w2_ref).sum()==0)
+		w3 = gol.evolve(w2)
+		self.assertTrue((w3 != w1).sum()==0)
+
 
 if __name__ == "__main__":
 	unittest.main()
