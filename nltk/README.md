@@ -1,5 +1,9 @@
 # NLTK Dojo
 
+## Introduction
+
+This is the directory for the NLTK dojo session happening next November 28th.
+
 ## Setup
 
 ### With Conda
