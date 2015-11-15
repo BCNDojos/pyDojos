@@ -23,4 +23,9 @@ pip install -r requirements.txt
 
 ```
 
+### Resources
+
+[NLTK](http://www.nltk.org/)
+A [simple introduction to Naive Bayes classification](http://www.laurentluce.com/posts/twitter-sentiment-analysis-using-python-and-nltk/), using NLTK to classify tweets by sentiment (postive/negative).
+
 TODO!
