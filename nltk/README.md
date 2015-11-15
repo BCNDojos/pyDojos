@@ -3,6 +3,7 @@
 ## Introduction
 
 This is the directory for the NLTK dojo session happening next November 28th.
+This dojo session is based in work done in a [hackathon project developed at Devex](https://github.com/Devex/research) last month.
 
 ## Setup
 
