@@ -17,4 +17,10 @@ For setting this dojo up with [Conda](http://conda.pydata.org/miniconda.html), y
 
 For setting this dojo up with [VirtualEnv](https://virtualenv.readthedocs.org/en/latest/), you can use this command:
 
+```bash
+mkvirtualenv dojos
+pip install -r requirements.txt
+
+```
+
 TODO!
