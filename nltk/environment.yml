@@ -1,6 +1,7 @@
 name: nltk
 dependencies:
 - appnope=0.1.0=py34_0
+- beautifulsoup4=4.4.1=py34_0
 - decorator=4.0.4=py34_0
 - freetype=2.5.5=0
 - ipykernel=4.1.1=py34_0
@@ -26,6 +27,7 @@ dependencies:
 - pexpect=3.3=py34_0
 - pickleshare=0.5=py34_0
 - pip=7.1.2=py34_0
+- psycopg2=2.6.1=py34_0
 - ptyprocess=0.5=py34_0
 - pygments=2.0.2=py34_0
 - pyqt=4.11.4=py34_0
@@ -40,6 +42,7 @@ dependencies:
 - simplegeneric=0.8.1=py34_0
 - sip=4.16.9=py34_0
 - six=1.10.0=py34_0
+- sqlalchemy=1.0.9=py34_0
 - sqlite=3.8.4.1=1
 - terminado=0.5=py34_1
 - tk=8.5.18=0
