@@ -28,11 +28,13 @@ def get_contract_descriptions(max_companies=10, max_contracts=1000):
                      COUNT(b.contract_id) as bidded_contracts
               FROM bidders b
               JOIN companies com ON b.company_id = com.id
+              WHERE b.is_contract_awardee = true
               GROUP BY c_id, com.name
               ORDER BY bidded_contracts DESC
               LIMIT {}
              ) c_b ON c_id = b.company_id
         WHERE c.description_raw IS NOT NULL
+        AND b.is_contract_awardee = true
         LIMIT {}'''.format(max_companies, max_contracts))
 
     results = []
