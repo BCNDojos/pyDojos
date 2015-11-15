@@ -1,10 +1,11 @@
 ## Pasos para hacer Naive Bayes
-    - tokenización
-    - normalización
-        - stemming
-    - filtrado
-    - entrenamiento
-    - evaluación
+
+    1. tokenización
+    2. filtrado
+    3. normalización
+        - stemming/lemmatization
+    4. entrenamiento
+    5. evaluación
 
 ## Tareas
 
