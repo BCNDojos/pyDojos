@@ -18,10 +18,15 @@ For setting this dojo up with [Conda](http://conda.pydata.org/miniconda.html), y
 For setting this dojo up with [VirtualEnv](https://virtualenv.readthedocs.org/en/latest/), you can use this command:
 
 ```bash
-mkvirtualenv dojos
-pip install -r requirements.txt
+# create and activate your virtual environment
+virtualenv dojo-nltk --python=/usr/bin/python3
+source dojo-nltk/bin/activate
 
+# install requirements
+pip install -r requirements.txt
 ```
+
+To exit virtualenv: `deactivate`
 
 ### Resources
 
