@@ -9,11 +9,9 @@
 
 ## Tareas
 
-1. Extraer corpus a json.
-2. Explicación Naive Bayes.
-3. (Notebook con los pasos básicos explicados.)
-4. Proporcionar .py con código basico:
-
+1. [COMPLETADA] Extraer corpus a json.
+2. Explicación Naive Bayes, pasos, ejemplo keyword-corpus de Devex.
+3. Primer pomodoro: Ejemplo propio con código básico:
     - Código
         - Carga del corpus.
         - Función para tokenizar.
@@ -32,11 +30,11 @@
             2. testing
 
         - Output: porcentaje de acierto
-
-5. Definir pasos siguientes:
-    - ¿Qué más clasificadores hay (aparte de NB)?
+4. Segundo pomodoro: Añadir variabilidad en las funciones de preprocesado.
     - ¿Qué otros preprocesados se pueden hacer?
         - Tokenizar de forma diferente?
         - Stemming, lemmatization?
         - Diferentes filtrados
-
+5. Tercer pomodoro: Añadir variabilidad en la elección del clasificador.
+    - ¿Qué más clasificadores hay (aparte de NB)?
+6. Cuarto pomodoro: Obtener el mejor resultado.
