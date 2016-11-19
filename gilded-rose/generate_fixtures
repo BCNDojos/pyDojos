@@ -1,0 +1,1 @@
+python generate_fixture.py 27 > golden_master.txt

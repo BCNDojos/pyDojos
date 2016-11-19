@@ -1,0 +1,1 @@
+pytest . && python generate_fixture.py 27 > test_output.txt && diff test_output.txt golden_master.txt

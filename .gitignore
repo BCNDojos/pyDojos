@@ -1,2 +1,4 @@
 .ipynb_checkpoints
 reveal.js
+.cache
+__pycache__
