@@ -41,3 +41,6 @@ class Tamagotchi(object):
 
     def put_to_bed(self):
         self._energy.charge()
+
+    def make_it_poop(self):
+        self._digestive_sys.poo()

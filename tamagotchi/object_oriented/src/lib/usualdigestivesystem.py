@@ -19,3 +19,6 @@ class UsualDigestiveSystem(DigestiveSystem):
 
     def eat(self):
         self._fullness.increase()
+
+    def poo(self):
+        self._fullness.decrease()

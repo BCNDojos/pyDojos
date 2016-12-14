@@ -7,6 +7,10 @@ class DigestiveSystem(metaclass=ABCMeta):
     def eat(self):
         pass
 
+    @abstractmethod
+    def poo(self):
+        pass
+
     @abstractproperty
     def hungriness(self):
         pass

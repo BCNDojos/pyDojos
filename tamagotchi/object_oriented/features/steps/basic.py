@@ -61,6 +61,12 @@ def step_put_to_bed(context):
     context.tamagotchi.put_to_bed()
 
 
+@when('I make it poop')
+def step_poop(context):
+    update_last_values(context)
+    context.tamagotchi.make_it_poop()
+
+
 # Then
 
 
