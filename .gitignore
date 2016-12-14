@@ -2,3 +2,4 @@
 reveal.js
 .cache
 __pycache__
+.idea
