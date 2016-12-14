@@ -38,3 +38,6 @@ class Tamagotchi(object):
     def play_with_it(self):
         self._addiction.satisfy()
         self._energy.discharge()
+
+    def put_to_bed(self):
+        self._energy.charge()

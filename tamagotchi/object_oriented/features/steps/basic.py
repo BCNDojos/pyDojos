@@ -55,6 +55,12 @@ def step_play(context):
     context.tamagotchi.play_with_it()
 
 
+@when('I put it to bed')
+def step_put_to_bed(context):
+    update_last_values(context)
+    context.tamagotchi.put_to_bed()
+
+
 # Then
 
 
