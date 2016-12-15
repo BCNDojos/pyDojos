@@ -79,50 +79,23 @@ def step_time_passes(context):
 # Then
 
 
-@then('its fullness is increased')
-def step_fullness_should_increase(context):
-    assert context.tamagotchi.fullness == context.last_fullness \
-                                          + context.digestive_diff
+@then('its {parameter} is {change}')
+def step_parameter_change(context, parameter, change):
 
+    if change == 'increased':
+        diff_sign = 1
+    elif change == 'decreased':
+        diff_sign = -1
+    else:
+        raise ValueError('Change "{!s}" is not implemented'.format(change))
 
-@then('its fullness is decreased')
-def step_fullness_should_decrease(context):
-    assert context.tamagotchi.fullness == context.last_fullness \
-                                          - context.digestive_diff
-
-
-@then('its hungriness is increased')
-def step_hungry_should_increase(context):
-    assert context.tamagotchi.hungriness == context.last_hungriness \
-                                            + context.digestive_diff
-
-
-@then('its hungriness is decreased')
-def step_hungry_should_decrease(context):
-    assert context.tamagotchi.hungriness == context.last_hungriness \
-                                            - context.digestive_diff
-
-
-@then('its happiness is increased')
-def step_happy_should_increase(context):
-    assert context.tamagotchi.happiness == context.last_happiness \
-                                           + context.game_diff
-
-
-@then('its happiness is decreased')
-def step_happy_should_decrease(context):
-    assert context.tamagotchi.happiness == context.last_happiness \
-                                           - context.game_diff
-
-
-@then('its tiredness is increased')
-def step_tired_should_increase(context):
-    assert context.tamagotchi.tiredness == context.last_tiredness \
-                                           + context.energy_diff
-
-
-@then('its tiredness is decreased')
-def step_tired_should_decrease(context):
-    assert context.tamagotchi.tiredness == context.last_tiredness \
-                                           - context.energy_diff
-
+    if parameter == 'fullness':
+        assert context.tamagotchi.fullness == context.last_fullness + context.digestive_diff * diff_sign
+    elif parameter == 'hungriness':
+        assert context.tamagotchi.hungriness == context.last_hungriness + context.digestive_diff * diff_sign
+    elif parameter == 'happiness':
+        assert context.tamagotchi.happiness == context.last_happiness + context.game_diff * diff_sign
+    elif parameter == 'tiredness':
+        assert context.tamagotchi.tiredness == context.last_tiredness + context.energy_diff * diff_sign
+    else:
+        raise ValueError('Parameter "{!s}" is not implemented'.format(parameter))
