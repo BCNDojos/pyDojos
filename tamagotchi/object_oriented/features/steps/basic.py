@@ -23,12 +23,13 @@ def update_last_values(context):
 @given('I have a Tamagotchi')
 def step_having_tamagotchi(context):
 
-    param = UnitParameter(5)
-    limited_param = UnitLimitedParameter(5, 10)
+    game_param = UnitParameter(5)
+    digestive_param = UnitLimitedParameter(5, 10)
+    energy_param = UnitLimitedParameter(5, 10)
 
-    addiction = GameAddiction(happiness=param)
-    digestive_sys = UsualDigestiveSystem(fullness=limited_param)
-    energy = BodyEnergy(fullness=limited_param)
+    addiction = GameAddiction(happiness=game_param)
+    digestive_sys = UsualDigestiveSystem(fullness=digestive_param)
+    energy = BodyEnergy(fullness=energy_param)
 
     tamagotchi = Tamagotchi(
         addiction=addiction,
@@ -36,7 +37,9 @@ def step_having_tamagotchi(context):
         energy=energy
     )
 
-    context.expected_diff = limited_param.difference
+    context.game_diff = game_param.difference
+    context.digestive_diff = digestive_param.difference
+    context.energy_diff = energy_param.difference
     context.tamagotchi = tamagotchi
 
 
@@ -67,51 +70,59 @@ def step_poop(context):
     context.tamagotchi.make_it_poop()
 
 
+@when('time passes')
+def step_time_passes(context):
+    update_last_values(context)
+    context.tamagotchi.time_passes()
+
+
 # Then
 
 
 @then('its fullness is increased')
 def step_fullness_should_increase(context):
     assert context.tamagotchi.fullness == context.last_fullness \
-                                          + context.expected_diff
+                                          + context.digestive_diff
 
 
 @then('its fullness is decreased')
-def step_impl(context):
+def step_fullness_should_decrease(context):
     assert context.tamagotchi.fullness == context.last_fullness \
-                                          - context.expected_diff
+                                          - context.digestive_diff
 
 
 @then('its hungriness is increased')
 def step_hungry_should_increase(context):
     assert context.tamagotchi.hungriness == context.last_hungriness \
-                                            + context.expected_diff
+                                            + context.digestive_diff
 
 
 @then('its hungriness is decreased')
 def step_hungry_should_decrease(context):
     assert context.tamagotchi.hungriness == context.last_hungriness \
-                                            - context.expected_diff
+                                            - context.digestive_diff
 
 
 @then('its happiness is increased')
 def step_happy_should_increase(context):
     assert context.tamagotchi.happiness == context.last_happiness \
-                                           + context.expected_diff
+                                           + context.game_diff
 
 
 @then('its happiness is decreased')
 def step_happy_should_decrease(context):
     assert context.tamagotchi.happiness == context.last_happiness \
-                                           - context.expected_diff
+                                           - context.game_diff
 
 
 @then('its tiredness is increased')
 def step_tired_should_increase(context):
-    assert context.tamagotchi.tiredness > context.last_tiredness
+    assert context.tamagotchi.tiredness == context.last_tiredness \
+                                           + context.energy_diff
 
 
 @then('its tiredness is decreased')
 def step_tired_should_decrease(context):
-    assert context.tamagotchi.tiredness < context.last_tiredness
+    assert context.tamagotchi.tiredness == context.last_tiredness \
+                                           - context.energy_diff
 

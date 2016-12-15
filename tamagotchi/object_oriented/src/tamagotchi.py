@@ -44,3 +44,8 @@ class Tamagotchi(object):
 
     def make_it_poop(self):
         self._digestive_sys.poo()
+
+    def time_passes(self):
+        self._energy.discharge()
+        self._digestive_sys.burn()
+        self._addiction.dissatisfy()

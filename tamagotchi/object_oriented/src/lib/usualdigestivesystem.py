@@ -22,3 +22,6 @@ class UsualDigestiveSystem(DigestiveSystem):
 
     def poo(self):
         self._fullness.decrease()
+
+    def burn(self):
+        self._fullness.decrease()
