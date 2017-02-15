@@ -13,7 +13,6 @@ def test_unix_pair():
 
     with BerkeleySocketServer(file_path=file_path) as server:
         hello.say_hello(client, server)
-        client.disconnect()
 
 
 def test_internet_pair():
@@ -24,4 +23,3 @@ def test_internet_pair():
 
     with BerkeleySocketServer(host=bind_address, port=port) as server:
         hello.say_hello(client, server)
-        client.disconnect()

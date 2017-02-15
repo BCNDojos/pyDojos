@@ -5,7 +5,8 @@ Hello workflow:
     2. Client connects to server.
     3. Client sends a hello message to server.
     4. Server reads the message and returns the ack for the received message.
-    5. Server closes connection.
+    5. Client closes connection.
+    5. Server closes socket.
     6. Assertions.
 """
 import sys
@@ -38,4 +39,5 @@ def say_hello(client: Client, server: Server):
     client.connect()
     client.write(EXPECTED_HELLO_CLIENT)
     answer = client.read()
+    client.disconnect()
     assert answer == expected_server_response()
