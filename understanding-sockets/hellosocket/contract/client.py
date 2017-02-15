@@ -14,7 +14,7 @@ class Client(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def read(self):
+    def read(self, buffer_size):
         pass
 
     @abstractmethod

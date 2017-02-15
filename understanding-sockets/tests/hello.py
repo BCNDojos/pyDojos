@@ -33,7 +33,7 @@ def hello_from_client(client: Client, server: Server):
     server.listen_background()
     client.connect()
     client.write(EXPECTED_HELLO_CLIENT)
-    answer = client.read()
+    answer = client.read(256)
     server.close()
     assert answer == expected_server_response()
 
