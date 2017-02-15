@@ -16,7 +16,3 @@ class Client(metaclass=ABCMeta):
     @abstractmethod
     def read(self):
         pass
-
-    @abstractmethod
-    def connect_background(self):
-        pass

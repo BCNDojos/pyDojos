@@ -12,5 +12,4 @@ def test_pseudo_pair():
     client = PseudoSocketClient(file_path)
     server = PseudoSocketServer(file_path)
 
-    hello.hello_from_client(client, server)
-    hello.hello_from_server(client, server)
+    hello.say_hello(client, server)
