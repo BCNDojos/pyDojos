@@ -1,9 +1,10 @@
 from threading import Thread
 
+from hellosocket.contract.berkeleyside import BerkeleySide
 from hellosocket.contract.server import Server
 
 
-class BerkeleySocketServer(Server):
+class BerkeleySocketServer(Server, BerkeleySide):
 
     def __init__(self, **kwargs):
         self._address = self.parse_address(kwargs)

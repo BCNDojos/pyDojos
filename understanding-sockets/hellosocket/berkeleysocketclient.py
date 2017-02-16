@@ -1,7 +1,8 @@
+from hellosocket.contract.berkeleyside import BerkeleySide
 from hellosocket.contract.client import Client
 
 
-class BerkeleySocketClient(Client):
+class BerkeleySocketClient(Client, BerkeleySide):
 
     def __init__(self, **kwargs):
         self._address = self.parse_address(kwargs)
