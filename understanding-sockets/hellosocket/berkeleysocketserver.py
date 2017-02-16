@@ -21,7 +21,6 @@ class BerkeleySocketServer(Server, BerkeleySide):
             print("[server] Connects by {!s}".format(address))
             self._listening = True
             while self._listening:
-                print("[server] while")
                 received = client_conn.recv(1024).decode()
                 answer = self.HELLO_FORMAT.format(received).encode()
                 self._send_all(client_conn, answer)

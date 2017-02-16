@@ -41,4 +41,7 @@ def say_hello(client: Client, server: Server):
     answer = client.read()
     client.disconnect()
     server.close()
+    print("[DEBUG]")
+    print(answer)
+    print(expected_server_response())
     assert answer == expected_server_response()
