@@ -1,30 +1,24 @@
-import socket
-
 from hellosocket.contract.client import Client
 
 
 class BerkeleySocketClient(Client):
 
     def __init__(self, **kwargs):
-        if "host" in kwargs and "port" in kwargs:
-            self._address = (kwargs["host"], kwargs["port"])
-        elif "file_path" in kwargs:
-            self._address = kwargs["file_path"]
-        else:
-            raise AttributeError("Missing address")
+        self._address = self.parse_address(kwargs)
+        unix_type = type(self._address) == str
+        self._socket = self.build_socket(unix_type)
 
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    def __del__(self):
+    def disconnect(self):
+        print("[client] Close socket")
         self._socket.close()
 
-    def connect_background(self):
-        pass
-
-    def read(self, buffer_size):
-        return self._socket.recv(buffer_size)
+    def read(self):
+        print("[client] Reads buffer")
+        received = self._socket.recv(1024).decode()
+        return received
 
     def write(self, message):
+        print("[client] Sends message {!s}".format(message))
         self._socket.sendall(message.encode())
 
     def connect(self):

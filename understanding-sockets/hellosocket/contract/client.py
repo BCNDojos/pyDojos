@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
+from hellosocket.contract.berkeleyside import BerkeleySide
 
-class Client(metaclass=ABCMeta):
+
+class Client(BerkeleySide, metaclass=ABCMeta):
 
     HELLO = "Hello, my name is client"
 
@@ -14,9 +16,9 @@ class Client(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def read(self, buffer_size):
+    def read(self):
         pass
 
     @abstractmethod
-    def connect_background(self):
+    def disconnect(self):
         pass

@@ -11,9 +11,7 @@ def test_unix_pair():
     file_path = "/tmp/unix_socket.sock"
     client = BerkeleySocketClient(file_path=file_path)
     server = BerkeleySocketServer(file_path=file_path)
-
-    hello.hello_from_client(client, server)
-    # hello.hello_from_server(client, server)
+    hello.say_hello(client, server)
 
 
 def test_internet_pair():
@@ -22,6 +20,4 @@ def test_internet_pair():
     port = 43210
     client = BerkeleySocketClient(host=host, port=port)
     server = BerkeleySocketServer(host=bind_address, port=port)
-
-    hello.hello_from_client(client, server)
-    # hello.hello_from_server(client, server)
+    hello.say_hello(client, server)

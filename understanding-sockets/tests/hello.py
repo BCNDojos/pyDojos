@@ -5,10 +5,14 @@ Hello workflow:
     2. Client connects to server.
     3. Client sends a hello message to server.
     4. Server reads the message and returns the ack for the received message.
-    5. Server closes connection.
+    5. Client closes connection.
+    5. Server closes socket.
     6. Assertions.
 """
 import sys
+
+import time
+
 sys.path.append("..")
 
 from hellosocket.contract.client import Client
@@ -22,7 +26,7 @@ def expected_server_response():
     return EXPECTED_HELLO_SERVER_FORMAT.format(EXPECTED_HELLO_CLIENT)
 
 
-def hello_from_client(client: Client, server: Server):
+def say_hello(client: Client, server: Server):
     """
     Assert received ack from the server in client side when server listens in
     a separated thread.
@@ -30,25 +34,11 @@ def hello_from_client(client: Client, server: Server):
     :param server: Server
     :return: None
     """
-    server.listen_background()
+    server.listen()
+    time.sleep(1)               # Let start socket server
     client.connect()
     client.write(EXPECTED_HELLO_CLIENT)
-    answer = client.read(256)
+    answer = client.read()
+    client.disconnect()
     server.close()
     assert answer == expected_server_response()
-
-
-def hello_from_server(client: Client, server: Server):
-    """
-    Assert received hello from client in server side when client connects in a
-    separated thread.
-    :param client: Client
-    :param server: Server
-    :return: None
-    """
-    server.listen()
-    client.connect_background()
-    answer = server.read()
-    server.write(EXPECTED_HELLO_SERVER_FORMAT)
-    server.close()
-    assert answer == EXPECTED_HELLO_CLIENT
