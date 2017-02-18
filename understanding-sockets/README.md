@@ -12,3 +12,7 @@ and how to implement both client and server sides with Python.
 Please, ensure you have any Python interpreter (preferably 3.5) and pytest 
 installed in your preferred environment.
 
+## Slides ##
+
+https://docs.google.com/presentation/d/1TOtIxjFnkAXRchshL_UzhMY8dxWyK2-LEKkCS9nY7U8/edit#slide=id.p
+
