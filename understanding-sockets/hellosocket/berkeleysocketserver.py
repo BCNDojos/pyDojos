@@ -22,12 +22,16 @@ class BerkeleySocketServer(Server, BerkeleySide):
             self._listening = True
             while self._listening:
                 received = client_conn.recv(1024).decode()
-                answer = self.HELLO_FORMAT.format(received).encode()
-                self._send_all(client_conn, answer)
+                answer = self.HELLO_FORMAT.format(received)
+                self._send_all(client_conn, address, answer)
 
-    def _send_all(self, conn, answer):
+    def _send_all(self, conn, address, answer):
         if self._listening:
-            conn.sendall(answer)
+            try:
+                conn.sendall(answer.encode())
+            except BrokenPipeError:
+                print("[server] Broken connection with {!s}".format(address))
+                raise
 
     def listen(self):
         self._async_listener.start()
