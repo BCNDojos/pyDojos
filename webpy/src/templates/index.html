@@ -1,4 +1,4 @@
-$def with (fullname, title, items)
+$def with (fullname, title, items, form_html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +13,17 @@ $def with (fullname, title, items)
 <body>
 <h1><em>Hello</em>, $fullname!</h1>
 
+<h2>Login Form</h2>
+
+$:form_html
+
+<div>More information about form module here
+    <a href="http://webpy.org/form">http://webpy.org/form</a>
+
+<h2>More about</h2>
+
 <div>More information about templates here
-    <a href="webpy.org/docs/0.3/templetor">webpy.org/docs/0.3/templetor</a>
+    <a href="http://webpy.org/docs/0.3/templetor">http://webpy.org/docs/0.3/templetor</a>
     <ul>
         $while items:
         <li>$items.pop()</li>
