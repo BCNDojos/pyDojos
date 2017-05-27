@@ -1,0 +1,28 @@
+$def with (fullname, title, items)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        $if title:
+            $title
+        $else:
+            This is my page
+    </title>
+</head>
+<body>
+<h1><em>Hello</em>, $fullname!</h1>
+
+Go to <a href="/private/">Login</a>
+
+<h2>More about</h2>
+
+<div>More information about templates here
+    <a href="http://webpy.org/docs/0.3/templetor">http://webpy.org/docs/0.3/templetor</a>
+    <ul>
+        $while items:
+        <li>$items.pop()</li>
+    </ul>
+</div>
+</body>
+</html>
