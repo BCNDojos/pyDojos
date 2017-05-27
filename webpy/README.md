@@ -38,4 +38,4 @@ More information about web.py in the official website
     * Fields validation.
 6. Basic Authentication.
     * Http authentication header.
-    * Logout by Unauthorized header.
+    * Logout by Unauthorized status.
