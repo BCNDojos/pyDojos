@@ -1,4 +1,4 @@
-$def with (fullname, title, items, form_html)
+$def with (fullname, title, items)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,12 +13,7 @@ $def with (fullname, title, items, form_html)
 <body>
 <h1><em>Hello</em>, $fullname!</h1>
 
-<h2>Login Form</h2>
-
-$:form_html
-
-<div>More information about form module here
-    <a href="http://webpy.org/form">http://webpy.org/form</a>
+Go to <a href="/login">Login</a>
 
 <h2>More about</h2>
 

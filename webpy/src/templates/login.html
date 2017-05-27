@@ -1,0 +1,26 @@
+$def with (my_form)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login page</title>
+</head>
+<body>
+
+<a href="/">Index</a> / Login
+
+<h1>Login Form</h1>
+
+<form name="main" method="post">
+
+$if not my_form.valid: <p class="error">Errors found, try again:</p>
+$:my_form.render()
+
+<input type="submit" value="Login" />
+</form>
+<br>
+<div>More information about form module here
+    <a href="http://webpy.org/form">http://webpy.org/form</a>
+</div>
+</body>
+</html>
