@@ -22,3 +22,20 @@ More information about web.py in the official website
 [http://webpy.org/](http://webpy.org/).
 
 **web.py is native for python 2.7+ and python 3 is not supported.**
+
+## Session key points ##
+
+1. Installing dependencies.
+2. Hello, world!
+3. Temporary remote access by ngrok.
+4. Templates.
+    * Fail with indentation.
+    * Update python file and template and check with no server restarting.
+    * Template not found due to current working directory.
+5. Forms.
+    * Printing Form. Escaped and unescaped passed html.
+    * Submit Form and get body.
+    * Fields validation.
+6. Basic Authentication.
+    * Http authentication header.
+    * Logout by Unauthorized header.

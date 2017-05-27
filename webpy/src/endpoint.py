@@ -13,8 +13,18 @@ render = web.template.render('{!s}/templates/'.format(CWD))
 urls = (
   '/', 'Index',
   '/login', 'Login',
-  '/private/', 'Private',
+  '/private/(.*)', 'Private',
 )
+
+
+class ForcedUnauthorized(web.Unauthorized):
+    """`401 Unauthorized` error."""
+    message = "unauthorized"
+
+    def __init__(self, headers, message=None):
+        status = "401 Unauthorized"
+        headers.update({'Content-Type': 'text/html'})
+        web.HTTPError.__init__(self, status, headers, message or self.message)
 
 
 class Private:
@@ -25,7 +35,13 @@ class Private:
             ('test', '87654321')
         ]
 
-    def GET(self):
+    def GET(self, rest):
+        if rest == 'logout':
+            raise ForcedUnauthorized(
+                {
+                    'WWW-Authenticate': 'Basic realm="Auth example"'
+                }
+            )
         auth = web.ctx.env.get('HTTP_AUTHORIZATION')
         if auth is None:
             auth_is_required = True
@@ -39,7 +55,7 @@ class Private:
         if auth_is_required:
             web.header('WWW-Authenticate', 'Basic realm="Auth example"')
             web.ctx.status = '401 Unauthorized'
-            return
+            return render.http401()
 
 
 class Login:
