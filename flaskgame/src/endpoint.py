@@ -33,6 +33,8 @@ def fighting():
     if request.method not in ['POST', 'PUT', 'GET', 'DELETE']:
         return abort(405)
 
+    query_args = request.args.to_dict()
+
     if request.method == 'POST':
         if fight:
             return abort(400)
@@ -49,10 +51,13 @@ def fighting():
         return '{!s} ({:d})\n'.format(whining, damage)
 
     if request.method == 'GET':
+        score_prefix = ''
+        if 'score_prefix' in query_args:
+            score_prefix = query_args['score_prefix']
         score_value = final_score
         if fight:
             score_value = fight.current_damage
-        return '{:d}\n'.format(score_value)
+        return '{!s}{:d}\n'.format(score_prefix, score_value)
 
     if request.method == 'DELETE':
         if fight:

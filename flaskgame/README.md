@@ -20,11 +20,29 @@ More information about Flask in the official website
 1. Hello world!
 2. Context introduction.
 3. Start Fighting.
+	```
+	curl http://localhost:5000
+	curl -XDELETE http://localhost:5000
+	curl -XPOST http://localhost:5000/fight
+	```
 4. Do Punch.
+	```
+	curl -XPUT http://localhost:5000/fight
+	```
 5. Get current Score.
+	```
+	curl http://localhost:5000/fight
+	```
 6. End Fighting.
-7. Template, Upload file, Authorization, encoding,...
-8. Fighting automation.
+	```
+	curl -XDELETE http://localhost:5000/fight
+	```
+7. URL query string
+	```
+	curl http://localhost:5000/fight?score_prefix=Damage%20is%3A%20
+	```
+n. Template, Upload file, Authorization, encoding,...
+n. Fighting automation.
 
 ## HTTP Punch ##
  
