@@ -45,6 +45,10 @@ More information about Flask in the official website
 	```
     curl -XPUT --data "multiplier=2" http://localhost:5000/fight
 	```
+8. Post fields as JSON
+	```
+    curl -XPUT --header "Content-Type:application/json" --data "{\"multiplier\": 2, \"whining_choices\": [\"AAArg...\", \"Uaala\"]}" http://localhost:5000/fight
+	```
 n. Template, Upload file, Authorization, encoding,...
 n. Fighting automation.
 

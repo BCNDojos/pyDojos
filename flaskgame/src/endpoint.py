@@ -39,8 +39,17 @@ def fighting():
         return _start()
 
     if request.method == 'PUT':
-        multiplier = request.form.get('multiplier', type=int)
-        return _punch(multiplier)
+        multiplier = None
+        whining_choices = None
+        if request.is_json:
+            request_data = request.json
+        else:
+            request_data = request.form
+        if 'multiplier' in request_data:
+            multiplier = int(request_data['multiplier'])
+        if 'whining_choices' in request_data:
+            whining_choices = request_data['whining_choices']
+        return _punch(multiplier, whining_choices)
 
     if request.method == 'GET':
         return _score(query_args)
@@ -68,17 +77,23 @@ def _score(query_args):
     return '{!s}{:d}\n'.format(score_prefix, score_value)
 
 
-def _punch(multiplier):
+def _punch(multiplier, whining_choices=None):
     global fight
+
     if not fight:
         return abort(400)
+
+    if not whining_choices:
+        whining_choices = ['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs']
     if not multiplier:
         multiplier = 1
+
     while multiplier:
         fight.punch()
         multiplier -= 1
+
     damage = fight.current_damage
-    whining = random.choice(['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs'])
+    whining = random.choice(whining_choices)
     return '{!s} ({:d})\n'.format(whining, damage)
 
 
