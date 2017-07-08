@@ -1,5 +1,8 @@
 from flask import Flask, request, abort
 
+from flaskgame.src.fightvalue import FightValue
+from flaskgame.src.randompunchservice import RandomPunchService
+
 app = Flask(__name__)
 
 is_ready = None
@@ -18,6 +21,20 @@ def ready():
         fight = None
     is_ready = True
     return 'Fight ready to start!\n'
+
+
+@app.route('/fight', methods=['POST', 'PUT', 'GET', 'DELETE'])
+def fighting():
+    global fight
+    if request.method not in ['POST', 'PUT', 'GET', 'DELETE']:
+        return abort(405)
+    if request.method == 'POST':
+        if fight:
+            return abort(400)
+        puncher = RandomPunchService(min_value=0, max_damage=100)
+        fight = FightValue(punch_service=puncher)
+        return 'Fighting!!\n'
+
 
 if __name__ == '__main__':
     app.run(debug=True)
