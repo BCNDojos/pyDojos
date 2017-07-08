@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, render_template
 
 from flaskgame.src.fightvalue import FightValue
 from flaskgame.src.randompunchservice import RandomPunchService
@@ -17,14 +17,12 @@ def ready():
     global is_ready, fight, final_score
     if request.method not in ['GET', 'DELETE']:
         return abort(405)
-    if is_ready and request.method == 'GET':
-        return abort(400)
-    else:
-        # Reset fight on DELETE
+    if request.method == 'DELETE':
         fight = None
         final_score = 0
+    _update_score()
     is_ready = True
-    return 'Fight ready to start!\n'
+    return _render(message='Fight ready to start!', score=final_score)
 
 
 @app.route('/fight', methods=['POST', 'PUT', 'GET', 'DELETE'])
@@ -58,12 +56,26 @@ def fighting():
         return _end()
 
 
+def _update_score():
+    global fight, final_score
+    if fight:
+        final_score = fight.current_damage
+
+
+def _render(with_template=True, **kwargs):
+    if with_template:
+        return render_template('index.html', **kwargs)
+    else:
+        if 'message' in kwargs:
+            return kwargs['message']
+
+
 def _end():
     global fight, final_score
     if fight:
         final_score = fight.current_damage
         fight = None
-    return 'Fight ended\n'
+    return _render(False, message='Fight ended')
 
 
 def _score(query_args):
@@ -71,10 +83,11 @@ def _score(query_args):
     score_prefix = ''
     if 'score_prefix' in query_args:
         score_prefix = query_args['score_prefix']
+    _update_score()
     score_value = final_score
     if fight:
         score_value = fight.current_damage
-    return '{!s}{:d}\n'.format(score_prefix, score_value)
+    return _render(False, message='{!s}{:d}'.format(score_prefix, score_value))
 
 
 def _punch(multiplier, whining_choices=None):
@@ -94,7 +107,7 @@ def _punch(multiplier, whining_choices=None):
 
     damage = fight.current_damage
     whining = random.choice(whining_choices)
-    return '{!s} ({:d})\n'.format(whining, damage)
+    return _render(False, message='{!s} ({:d})'.format(whining, damage))
 
 
 def _start():
@@ -103,7 +116,7 @@ def _start():
         return abort(400)
     puncher = RandomPunchService(min_value=0, max_damage=100)
     fight = FightValue(punch_service=puncher)
-    return 'Fighting!!\n'
+    return _render(False, message='Fighting!!')
 
 
 if __name__ == '__main__':

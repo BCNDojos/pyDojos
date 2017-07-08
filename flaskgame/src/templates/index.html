@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+        <title>HTTP Punch</title>
+    </head>
+    <body>
+    <h1>{{ message }}</h1>
+    <h2>Score: {{ score }}</h2>
+    <form method="post" action="/fight">
+        <input type="submit" value="Submit" />
+    </form>
+    </body>
+</html>

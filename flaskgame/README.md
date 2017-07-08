@@ -49,6 +49,7 @@ More information about Flask in the official website
 	```
     curl -XPUT --header "Content-Type:application/json" --data "{\"multiplier\": 2, \"whining_choices\": [\"AAArg...\", \"Uaala\"]}" http://localhost:5000/fight
 	```
+	
 n. Template, Upload file, Authorization, encoding,...
 n. Fighting automation.
 
