@@ -37,9 +37,13 @@ More information about Flask in the official website
 	```
 	curl -XDELETE http://localhost:5000/fight
 	```
-7. URL query string
+7. URL query string to set a prefix for the Score response.
 	```
 	curl http://localhost:5000/fight?score_prefix=Damage%20is%3A%20
+	```
+7. Post fields to set a multiplier of doing punches
+	```
+    curl -XPUT --data "multiplier=2" http://localhost:5000/fight
 	```
 n. Template, Upload file, Authorization, encoding,...
 n. Fighting automation.
@@ -66,3 +70,11 @@ for this game below:
   fighting Score. 200 Success status.
 * HTTP DELETE Endpoint Request = End fighting, last Score got by GET is the final 
   Score. 204 No Content status code.
+  
+  
+### Penalties ###
+
+* If Minimum Damage reaches Maximum Damage, the score will turn to 0, and there 
+  is no chance to increase anymore.
+* If number of done punches exceeds the punches limit, the score will turn to 0, 
+  and there is no chance to increase anymore.

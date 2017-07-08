@@ -36,34 +36,59 @@ def fighting():
     query_args = request.args.to_dict()
 
     if request.method == 'POST':
-        if fight:
-            return abort(400)
-        puncher = RandomPunchService(min_value=0, max_damage=100)
-        fight = FightValue(punch_service=puncher)
-        return 'Fighting!!\n'
+        return _start()
 
     if request.method == 'PUT':
-        if not fight:
-            return abort(400)
-        fight.punch()
-        damage = fight.current_damage
-        whining = random.choice(['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs'])
-        return '{!s} ({:d})\n'.format(whining, damage)
+        multiplier = request.form.get('multiplier', type=int)
+        return _punch(multiplier)
 
     if request.method == 'GET':
-        score_prefix = ''
-        if 'score_prefix' in query_args:
-            score_prefix = query_args['score_prefix']
-        score_value = final_score
-        if fight:
-            score_value = fight.current_damage
-        return '{!s}{:d}\n'.format(score_prefix, score_value)
+        return _score(query_args)
 
     if request.method == 'DELETE':
-        if fight:
-            final_score = fight.current_damage
-            fight = None
-        return 'Fight ended\n'
+        return _end()
+
+
+def _end():
+    global fight, final_score
+    if fight:
+        final_score = fight.current_damage
+        fight = None
+    return 'Fight ended\n'
+
+
+def _score(query_args):
+    global fight
+    score_prefix = ''
+    if 'score_prefix' in query_args:
+        score_prefix = query_args['score_prefix']
+    score_value = final_score
+    if fight:
+        score_value = fight.current_damage
+    return '{!s}{:d}\n'.format(score_prefix, score_value)
+
+
+def _punch(multiplier):
+    global fight
+    if not fight:
+        return abort(400)
+    if not multiplier:
+        multiplier = 1
+    while multiplier:
+        fight.punch()
+        multiplier -= 1
+    damage = fight.current_damage
+    whining = random.choice(['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs'])
+    return '{!s} ({:d})\n'.format(whining, damage)
+
+
+def _start():
+    global fight
+    if fight:
+        return abort(400)
+    puncher = RandomPunchService(min_value=0, max_damage=100)
+    fight = FightValue(punch_service=puncher)
+    return 'Fighting!!\n'
 
 
 if __name__ == '__main__':
