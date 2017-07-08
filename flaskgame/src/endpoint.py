@@ -9,11 +9,12 @@ app = Flask(__name__)
 
 is_ready = None
 fight = None
+final_score = 0
 
 
 @app.route('/', methods=['GET', 'DELETE'])
 def ready():
-    global is_ready, fight
+    global is_ready, fight, final_score
     if request.method not in ['GET', 'DELETE']:
         return abort(405)
     if is_ready and request.method == 'GET':
@@ -21,13 +22,14 @@ def ready():
     else:
         # Reset fight on DELETE
         fight = None
+        final_score = 0
     is_ready = True
     return 'Fight ready to start!\n'
 
 
 @app.route('/fight', methods=['POST', 'PUT', 'GET', 'DELETE'])
 def fighting():
-    global fight
+    global fight, final_score
     if request.method not in ['POST', 'PUT', 'GET', 'DELETE']:
         return abort(405)
 
@@ -45,6 +47,18 @@ def fighting():
         damage = fight.current_damage
         whining = random.choice(['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs'])
         return '{!s} ({:d})\n'.format(whining, damage)
+
+    if request.method == 'GET':
+        score_value = final_score
+        if fight:
+            score_value = fight.current_damage
+        return '{:d}\n'.format(score_value)
+
+    if request.method == 'DELETE':
+        if fight:
+            final_score = fight.current_damage
+            fight = None
+        return 'Fight ended\n'
 
 
 if __name__ == '__main__':
