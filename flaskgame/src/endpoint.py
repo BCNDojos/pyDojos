@@ -1,3 +1,5 @@
+import random
+
 from flask import Flask, request, abort
 
 from flaskgame.src.fightvalue import FightValue
@@ -28,12 +30,21 @@ def fighting():
     global fight
     if request.method not in ['POST', 'PUT', 'GET', 'DELETE']:
         return abort(405)
+
     if request.method == 'POST':
         if fight:
             return abort(400)
         puncher = RandomPunchService(min_value=0, max_damage=100)
         fight = FightValue(punch_service=puncher)
         return 'Fighting!!\n'
+
+    if request.method == 'PUT':
+        if not fight:
+            return abort(400)
+        fight.punch()
+        damage = fight.current_damage
+        whining = random.choice(['Uuuffh', 'Oughhh', 'Aix', 'Pufghfs'])
+        return '{!s} ({:d})\n'.format(whining, damage)
 
 
 if __name__ == '__main__':
