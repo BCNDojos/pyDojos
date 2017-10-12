@@ -76,7 +76,7 @@ Well, this is where it gets interesting:
 - “Aged Brie” actually increases in quality the older it gets
 - The quality of an item is never more than 50
 - “Sulfuras...”, being a legendary item, never has to be sold or decreases in quality
-- “Backstage passes...”, like aged brie, increases in quality as it’s sell_in value approaches; quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less but quality drops to 0 after the concert
+- “Backstage passes...”, like aged brie, increases in quality as it’s ~sell_in~ value approaches; quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less but quality drops to 0 after the concert
 
 #+REVEAL: split
 
@@ -158,6 +158,58 @@ python generate_fixture.py 27 > golden_master.txt
 . ~/.bashrc &>/dev/null && . ~/.bash_profile &>/dev/null && activate gilded-rose &>/dev/null
 python generate_fixture.py 27 > golden_master.txt
 #+END_SRC
+
+*** Learn some magic
+
+Let's look at the file now, and check how the business rules are applied by the current implementation:
+
+#+INCLUDE: "golden_master.txt" src sh :lines "-25"
+
+#+REVEAL: split
+
+From these first 24 lines, we can infer the following:
+- /Normal/ items, like ~+5 Dexterity Vest~, ~Elixir of the Mongoose~, or ~Conjured Mana Cake~, are treated as described, so far; meaning these items' ~sell_in~ and ~quality~ attributes are decreased in 1
+- ~Aged Brie~, as specified, increases quality as getting older
+- ~Sulfuras...~ are kept untouched, even when the ~quality > 50~, or when the ~sell_in~ date was reached
+- ~Backstage passes...~ are also treated as specified, so far
+
+#+REVEAL: split
+
+#+INCLUDE: "golden_master.txt" src sh :lines "25-49"
+
+#+REVEAL: split
+
+These other lines show us some more details:
+- As described, ~Aged Brie~ increases ~quality~ twice, once the ~sell_in~ date has been reached
+- Two of the ~Backstage passes...~ items have reached maximum ~quality~, so these can't got it better
+- The behaviour of the rest of the items is as expected
+
+#+REVEAL: split
+
+#+INCLUDE: "golden_master.txt" src sh :lines "61-85"
+
+#+REVEAL: split
+
+In this part of the file, we can see the following:
+- /Normal/ items that passed ~sell_in~ date, like ~Elixir of the Mongoose~ or ~Conjured Mana Cake~ here, get 0 ~quality~
+- ~Backstage passes...~ having ~sell_in < 10~ increase their ~quality~ twice
+- ~Backstage passes...~ having passed their ~sell_in~, get 0 ~quality~
+
+#+REVEAL: split
+
+#+INCLUDE: "golden_master.txt" src sh :lines "121-145"
+
+#+REVEAL: split
+
+Here, the only thing left to confirm is that ~Backstage passes...~ having less than 5 days to ~sell_in~, increase quality by 3.
+
+#+REVEAL: split
+
+#+INCLUDE: "golden_master.txt" src sh :lines "312-"
+
+#+REVEAL: split
+
+Finally, the last two days updates can't increase ~Aged Brie~'s ~quality~ over 50.
 
 ** Equip your gear
 
