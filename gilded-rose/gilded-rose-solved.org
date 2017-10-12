@@ -139,7 +139,7 @@ That way, while refactoring, you'll be able to check the output of the following
 
 If you take a look to ~run_tests~ it will show how many days it is using to generate the fixture:
 
-#+INCLUDE: "run_tests" src sh :only-contents t
+#+INCLUDE: "run_tests" src bash :only-contents t
 
 So, this bash script runs ~pytest~ on current directory.
 If it works ok, then, it runs the fixture generator for 27 days, storing output to ~test_output.txt~.
@@ -163,7 +163,7 @@ python generate_fixture.py 27 > golden_master.txt
 
 Let's look at the file now, and check how the business rules are applied by the current implementation:
 
-#+INCLUDE: "golden_master.txt" src sh :lines "-25"
+#+INCLUDE: "golden_master.txt" src bash :lines "-25"
 
 #+REVEAL: split
 
@@ -175,7 +175,7 @@ From these first 24 lines, we can infer the following:
 
 #+REVEAL: split
 
-#+INCLUDE: "golden_master.txt" src sh :lines "25-49"
+#+INCLUDE: "golden_master.txt" src bash :lines "25-49"
 
 #+REVEAL: split
 
@@ -186,7 +186,7 @@ These other lines show us some more details:
 
 #+REVEAL: split
 
-#+INCLUDE: "golden_master.txt" src sh :lines "61-85"
+#+INCLUDE: "golden_master.txt" src bash :lines "61-85"
 
 #+REVEAL: split
 
@@ -197,7 +197,7 @@ In this part of the file, we can see the following:
 
 #+REVEAL: split
 
-#+INCLUDE: "golden_master.txt" src sh :lines "121-145"
+#+INCLUDE: "golden_master.txt" src bash :lines "121-145"
 
 #+REVEAL: split
 
@@ -205,7 +205,7 @@ Here, the only thing left to confirm is that ~Backstage passes...~ having less t
 
 #+REVEAL: split
 
-#+INCLUDE: "golden_master.txt" src sh :lines "312-"
+#+INCLUDE: "golden_master.txt" src bash :lines "312-"
 
 #+REVEAL: split
 
@@ -215,6 +215,58 @@ Finally, the last two days updates can't increase ~Aged Brie~'s ~quality~ over 5
 
 Before going on, you should also fill up the ~test_gilded_rose.py~ with tests for the all use cases...
 Be careful, there'll be dragons!
+
+*** Equipping one /Normal/ item
+    
+Let's start by discarding current tests in ~test_gilded_rose.py~, and start a new test from scratch for normal items updates.
+
+Remember the /AAA/ principle.
+
+As a recomendation, avoid to implement too complex test functions, at least, at the beginning. Readability and simplicity are more valuable than completeness and broad scopes.
+
+#+REVEAL: split
+
+Let's take this as example:
+
+#+BEGIN_SRC python :exports code
+def test_normal_items():
+    # Arrange
+    test_case = (
+        Item("+5 Dexterity Vest", 2, 4),
+        Item("+5 Dexterity Vest", 1, 3),
+    )
+    items = [test_case[0]]
+    gilded_rose = GildedRose(items)
+    # Act
+    gilded_rose.update_quality()
+    # Assert
+    for item in items:
+        assert item.sell_in == test_case[1].sell_in
+        assert item.quality == test_case[1].quality
+#+END_SRC
+
+#+REVEAL: split
+
+Now, let's check this is working fine:
+
+#+BEGIN_SRC bash :exports code
+pytest .
+#+END_SRC
+
+#+BEGIN_SRC bash :results output :exports results
+. ~/.bashrc &>/dev/null && . ~/.bash_profile &>/dev/null && activate gilded-rose &>/dev/null
+pytest .
+#+END_SRC
+
+#+RESULTS:
+: ============================= test session starts ==============================
+: platform linux -- Python 3.5.4, pytest-3.2.3, py-1.4.34, pluggy-0.4.0
+: rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/gilded-rose, inifile:
+: collected 1 item
+: 
+: test_gilded_rose.py .
+: 
+: =========================== 1 passed in 0.01 seconds ===========================
 
 ** Getting down the dungeon
 
