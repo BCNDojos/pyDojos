@@ -231,33 +231,8 @@ This requires an update to our system:
 
 Same rules on Items class and items property apply here.
 
-#+BEGIN_SRC bash -l :results output :exports none
-. ~/.bashrc &>/dev/null && . ~/.bash_profile &>/dev/null && activate gilded-rose &>/dev/null
-pytest . && python generate_fixture.py 27 > test_output.txt && diff test_output.txt golden_master.txt
-echo -n ""
-#+END_SRC
+* Gilded Rose Refactoring Kata Retrospective
 
-#+RESULTS:
-#+begin_example
-============================= test session starts ==============================
-platform linux -- Python 3.5.4, pytest-3.2.3, py-1.4.34, pluggy-0.4.0
-rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/gilded-rose, inifile:
-collected 1 item
-
-test_gilded_rose.py F
-
-=================================== FAILURES ===================================
-___________________________________ test_foo ___________________________________
-
-    def test_foo():
-        items = [Item("foo", 0, 0)]
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
->       assert "fixme" == items[0].name
-E       AssertionError: assert 'fixme' == 'foo'
-E         - fixme
-E         + foo
-
-test_gilded_rose.py:11: AssertionError
-=========================== 1 failed in 0.05 seconds ===========================
-#+end_example
+- Importance of running examples
+- Importance of tests
+- Relevance of business rules
