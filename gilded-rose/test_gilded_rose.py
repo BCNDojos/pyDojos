@@ -45,6 +45,34 @@ def test_normal_items():
     update_assert(items, test_cases)
 
 
+def test_conjured_items():
+    # Arrange
+    test_cases = [
+        (
+            Item("Conjured Mana Cake", 2, 4),
+            Item("Conjured Mana Cake", 1, 2),
+        ),
+        (
+            Item("Conjured Mana Cake", 1, 3),
+            Item("Conjured Mana Cake", 0, 1),
+        ),
+        (
+            Item("Conjured Mana Cake", 0, 2),
+            Item("Conjured Mana Cake", -1, 0),
+        ),
+        (
+            Item("Conjured Mana Cake", -1, 0),
+            Item("Conjured Mana Cake", -2, 0),
+        ),
+    ]
+    items, gilded_rose = update_arrange(test_cases)
+    # Act
+    gilded_rose.update_quality()
+    # Assert
+    update_assert(items, test_cases)
+
+
+
 def test_aged_brie_items():
     # Arrange
     test_cases = [

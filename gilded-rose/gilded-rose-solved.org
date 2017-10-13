@@ -8,6 +8,7 @@
 #+OPTIONS: reveal_title_slide:"<h1>%t</h1><h2>%a</h2>"
 #+OPTIONS: reveal_width:1200
 #+OPTIONS: reveal_height:800
+#+OPTIONS: num:nil
 #+REVEAL_THEME: beige
 
 * Dojo session
@@ -572,6 +573,57 @@ test_gilded_rose.py ....
 Once you get your tests completed and your ~golden_master~ ready, you can go ahead and start refactoring the ~update_quality~ method...
 Remember running your tests often and good luck!
 
+*** Refactor 1
+    
+**** Isolate ~Sulfuras...~
+First, add ~if item.name == sulfuras~ with continue, and keep the rest of the code, otherwise.
+In that part, remove mentions to ~Sulfuras...~, and fix indentation.
+
+**** Refactor all increasings and decreasings
+Make all increasings and decreasings use combined assignment.
+
+**** Isolate ~Aged Brie~
+Add branch in first level branching for ~Aged Brie~.
+Then, remove unnecessary code under the first level ~else~.
+
+**** Isolate ~Backstage passes...~
+Add branch in first level branching for ~Backstage passes...~.
+Then, remove unnecessary code under the first level ~else~.
+
+*** Refactor 1 (II)
+
+**** Generalize quality increasings and decreasings
+Create ~increase_quality(item)~ and ~decrease_quality(item)~ functions implementing the update with the appropriate checks.
+Make use of these functions where appropriate.
+
+**** Push ~sell_in~ decrease to the end of function
+Move ~items.sell_in -= 1~ to the end of the ~update_quality~ method, and update all thresholds.
+
+**** Add ~get_quality_differential~ to calculate quality differential for increasings
+Add ~get_quality_differential~, and make ~increase_quality~ to use it.
+
+*** Refactor 1 (III)
+
+**** Add ~arrange_quality~ function and use it in ~increase_quality~
+The ~arrange_quality~ function ensures quality is never bigger than 50.
+
+**** Include ~thresholds~ to increasings and quality differential calculation
+Make ~get_quality_differential~ to accept a list of values to repeat the differential increase.
+Make ~increase_quality~ to accept the same parameters, and pass it over to ~get_quality_differential~ call.
+Update appropriate ~increase_quality~ calls to use correct values.
+
+**** Make ~decrease_quality~ to use ~arrange_quality~
+Make ~arrange_quality~ to arrange value when it is less than 0.
+Make ~decrease_quality~ use it.
+
+*** Refactor 1 (IV)
+
+**** Extend ~get_quality_differential~ for decreasings
+Make ~get_quality_differential~ to calculate it for decreasings.
+
+**** Add expired to ~get_quality_differential~ and make ~increase_quality~ use it
+Put condition in ~update_quality~ branch for ~Backstage passes...~.
+
 ** The return to the Gilded Rose Inn
 
 Your task now is to add the new feature to our system so that we can begin selling a new category of items.
@@ -581,6 +633,22 @@ This requires an update to our system:
 - “Conjured” items degrade in quality twice as fast as normal items
 
 Same rules on Items class and items property apply here.
+
+*** Add behaviour to golden master
+    
+You'll need to update golden master file to reflect new behaviour.
+
+Run the complete test runner and ensure it now fails in comparing the outputs.
+
+*** Add test for ~Conjured...~ items
+    
+Let's add tests for ~Conjured...~ items, detailing the new behaviour.
+
+Now the complete test runner should fail running pytest.
+
+*** Refactor code for ~Conjured...~ items new behaviour
+    
+Refactor code to satisfy tests.
 
 * Gilded Rose Refactoring Kata Retrospective
 
