@@ -1,74 +1,273 @@
-<!DOCTYPE html>
-<html lang="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta charset="utf-8"/>
+<!-- 2017-10-13 Fri 02:38 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PyBCN Dojo: Gilded Rose Refactoring Kata</title>
-<meta name="author" content="(Ignasi Fosch)"/>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Ignasi Fosch" />
 <style type="text/css">
-.underline { text-decoration: underline; }
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
 </style>
-<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
 
-<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/beige.css" id="theme"/>
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
 
-<link rel="stylesheet" href="dojos.css"/>
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
 
-<!-- If the query includes 'print-pdf', include the PDF print sheet -->
-<script>
-    if( window.location.search.match( /print-pdf/gi ) ) {
-        var link = document.createElement( 'link' );
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
-        document.getElementsByTagName( 'head' )[0].appendChild( link );
-    }
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
-<section id="sec-title-slide"><h1>PyBCN Dojo: Gilded Rose Refactoring Kata</h1><h2>Ignasi Fosch</h2>
-</section>
-<section id="table-of-contents">
+<div id="content">
+<h1 class="title">PyBCN Dojo: Gilded Rose Refactoring Kata</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#/slide-org06667e0">Dojo session</a></li>
-<li><a href="#/slide-org41d4ce2">Gilded Rose Refactoring Kata</a>
+<li><a href="#orga33157e">Dojo session</a></li>
+<li><a href="#org8b2ca84">Gilded Rose Refactoring Kata</a>
 <ul>
-<li><a href="#/slide-orgd08fd33">The Gilded Rose Inn</a></li>
-<li><a href="#/slide-org1e86c31">Get your gear!</a></li>
-<li><a href="#/slide-org2bd1cf9">Equip your gear</a></li>
-<li><a href="#/slide-org917c315">Getting down the dungeon</a></li>
-<li><a href="#/slide-org7a50162">The return to the Gilded Rose Inn</a></li>
+<li><a href="#org394dc70">The Gilded Rose Inn</a></li>
+<li><a href="#org74fa3dc">Get your gear!</a></li>
+<li><a href="#org2f75dc8">Equip your gear</a></li>
+<li><a href="#org6a0db48">Getting down the dungeon</a></li>
+<li><a href="#org0db217b">The return to the Gilded Rose Inn</a></li>
 </ul>
 </li>
-<li><a href="#/slide-org13c6d81">Gilded Rose Refactoring Kata Retrospective</a></li>
+<li><a href="#org8c99681">Gilded Rose Refactoring Kata Retrospective</a></li>
 </ul>
 </div>
 </div>
-</section>
 
-<section>
-<section id="slide-org06667e0">
-<h2 id="org06667e0">Dojo session</h2>
-<div class="outline-text-2" id="text-org06667e0">
+<div id="outline-container-orga33157e" class="outline-2">
+<h2 id="orga33157e">Dojo session</h2>
+<div class="outline-text-2" id="text-orga33157e">
 </div>
-</section>
-<section id="slide-org00c3678">
-<h4 id="org00c3678">Coding dojo goals</h4>
-<ul>
+<div id="outline-container-orgf882847" class="outline-4">
+<h4 id="orgf882847">Coding dojo goals</h4>
+<div class="outline-text-4" id="text-orgf882847">
+<ul class="org-ul">
 <li>Enjoy coding with friends</li>
 <li>Learn about techniques and tools from others</li>
 <li>Share knowledge with others</li>
 <li>Practice new techniques and tools in a safe environment</li>
-
 </ul>
-</section>
-<section id="slide-orgc3e7fad">
-<h4 id="orgc3e7fad">Coding dojo principles</h4>
-<ul>
+</div>
+</div>
+<div id="outline-container-orgaa80953" class="outline-4">
+<h4 id="orgaa80953">Coding dojo principles</h4>
+<div class="outline-text-4" id="text-orgaa80953">
+<ul class="org-ul">
 <li>No competition, no target, no prizes</li>
 <li>Practice and experiment</li>
 <li>Master a subject</li>
@@ -77,29 +276,28 @@
 <li>Forget to learn again</li>
 <li>Baby steps, not in a rush</li>
 <li>Listen others</li>
-
 </ul>
-</section>
-<section id="slide-org71da655">
-<h4 id="org71da655">Coding dojo cycle</h4>
+</div>
+</div>
+<div id="outline-container-org2ed5575" class="outline-4">
+<h4 id="org2ed5575">Coding dojo cycle</h4>
+<div class="outline-text-4" id="text-org2ed5575">
 
 <div class="figure">
 <p><img src="dojo_cycle.png" alt="dojo_cycle.png" />
 </p>
 </div>
-
-</section>
-</section>
-<section>
-<section id="slide-org41d4ce2">
-<h2 id="org41d4ce2">Gilded Rose Refactoring Kata</h2>
-<div class="outline-text-2" id="text-org41d4ce2">
 </div>
-</section>
-</section>
-<section>
-<section id="slide-orgd08fd33">
-<h3 id="orgd08fd33">The Gilded Rose Inn</h3>
+</div>
+</div>
+
+<div id="outline-container-org8b2ca84" class="outline-2">
+<h2 id="org8b2ca84">Gilded Rose Refactoring Kata</h2>
+<div class="outline-text-2" id="text-org8b2ca84">
+</div>
+<div id="outline-container-org394dc70" class="outline-3">
+<h3 id="org394dc70">The Gilded Rose Inn</h3>
+<div class="outline-text-3" id="text-org394dc70">
 <p>
 Hi and welcome to team Gilded Rose.
 </p>
@@ -112,49 +310,38 @@ We have a system in place that updates our inventory for us.
 It was developed by a no-nonsense type named Leeroy, who has moved on to new adventures.
 </p>
 
-</section>
-<section >
-
 <p>
 First an introduction to our system:
 </p>
-<ul>
+<ul class="org-ul">
 <li>All items have a <code>sell_in</code> value which denotes the number of days we have to sell the item</li>
 <li>All items have a quality value which denotes how valuable the item is</li>
 <li>At the end of each day our system lowers both values for every item</li>
-
 </ul>
-
-</section>
-<section >
 
 <p>
 Pretty simple, right?
 Well, this is where it gets interesting:
 </p>
-<ul>
+<ul class="org-ul">
 <li>Once the sell by date has passed, quality degrades twice as fast</li>
 <li>The quality of an item is never negative</li>
 <li>“Aged Brie” actually increases in quality the older it gets</li>
 <li>The quality of an item is never more than 50</li>
 <li>“Sulfuras&#x2026;”, being a legendary item, never has to be sold or decreases in quality</li>
 <li>“Backstage passes&#x2026;”, like aged brie, increases in quality as it’s <code>sell_in</code> value approaches; quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less but quality drops to 0 after the concert</li>
-
 </ul>
-
-</section>
-<section >
 
 <p>
 Feel free to make any changes to the <code>update_quality</code> method and add any new code as long as everything still works correctly.
 However, do not alter the Item class or items property as those belong to the goblin in the corner who will insta-rage and one-shot you as he doesn’t believe in shared code ownership (you can make the <code>update_quality</code> method and items property static if you like, we’ll cover for you).
 </p>
+</div>
+</div>
 
-</section>
-</section>
-<section>
-<section id="slide-org1e86c31">
-<h3 id="org1e86c31">Get your gear!</h3>
+<div id="outline-container-org74fa3dc" class="outline-3">
+<h3 id="org74fa3dc">Get your gear!</h3>
+<div class="outline-text-3" id="text-org74fa3dc">
 <p>
 For this quest, you have been provided with some items that will help you&#x2026;
 </p>
@@ -162,9 +349,6 @@ For this quest, you have been provided with some items that will help you&#x2026
 <p>
 You've been provided with a fixture generator, which generates example runs with many cases.
 </p>
-
-</section>
-<section >
 
 <p>
 You can use it like this, argument is the number of days to count for update:
@@ -186,9 +370,6 @@ Conjured Mana Cake, 3, 6
 
 </pre>
 
-</section>
-<section >
-
 <pre class="example">
 -------- day 1 --------
 name, sellIn, quality
@@ -203,9 +384,6 @@ Backstage passes to a TAFKAL80ETC concert, 4, 50
 Conjured Mana Cake, 2, 5
 
 </pre>
-
-</section>
-<section >
 
 <p>
 You are strongly recommended to run this command with an appropriate number of days as argument, redirecting the output to a <code>golden_master.txt</code> file.
@@ -224,17 +402,17 @@ test_gilded_rose.py .
 ======================== 1 passed in 0.00 seconds ==============================
 
 </pre>
+</div>
 
-</section>
-<section id="slide-org3b914e9">
-<h4 id="org3b914e9">Get some scrolls</h4>
+<div id="outline-container-org1e3a828" class="outline-4">
+<h4 id="org1e3a828">Get some scrolls</h4>
+<div class="outline-text-4" id="text-org1e3a828">
 <p>
 If you take a look to <code>run_tests</code> it will show how many days it is using to generate the fixture:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest . &amp;&amp; python generate_fixture.py <span style="color: #AE81FF;">27</span> &gt; test_output.txt &amp;&amp; diff test_output.txt golden_master.txt
+<pre class="src src-bash">pytest . &amp;&amp; python generate_fixture.py <span style="color: #AE81FF;">27</span> &gt; test_output.txt &amp;&amp; diff test_output.txt golden_master.txt
 </pre>
 </div>
 
@@ -245,29 +423,26 @@ If this doesn't fail, then it compares output from current code with the fixture
 This fixture file is what needs to be generated in this step.
 </p>
 
-</section>
-<section >
-
 <p>
 Let's run it like this:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-nilang">python generate_fixture.py 27 &gt; golden_master.txt
+<pre class="src src-nilang">python generate_fixture.py 27 &gt; golden_master.txt
 </pre>
 </div>
+</div>
+</div>
 
-</section>
-<section id="slide-org21bca26">
-<h4 id="org21bca26">Learn some magic</h4>
+<div id="outline-container-org34d9a16" class="outline-4">
+<h4 id="org34d9a16">Learn some magic</h4>
+<div class="outline-text-4" id="text-org34d9a16">
 <p>
 Let's look at the file now, and check how the business rules are applied by the current implementation:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">-------- day <span style="color: #AE81FF;">0</span> --------
+<pre class="src src-bash">-------- day <span style="color: #AE81FF;">0</span> --------
 name, sellIn, quality
 +5 Dexterity Vest, <span style="color: #AE81FF;">10,</span> <span style="color: #AE81FF;">20</span>
 Aged Brie, <span style="color: #AE81FF;">2,</span> <span style="color: #AE81FF;">0</span>
@@ -293,26 +468,18 @@ Conjured Mana Cake, <span style="color: #AE81FF;">2,</span> <span style="color: 
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 From these first 24 lines, we can infer the following:
 </p>
-<ul>
+<ul class="org-ul">
 <li><i>Normal</i> items, like <code>+5 Dexterity Vest</code>, <code>Elixir of the Mongoose</code>, or <code>Conjured Mana Cake</code>, are treated as described, so far; meaning these items' <code>sell_in</code> and <code>quality</code> attributes are decreased in 1</li>
 <li><code>Aged Brie</code>, as specified, increases quality as getting older</li>
 <li><code>Sulfuras...</code> are kept untouched, even when the <code>quality &gt; 50</code>, or when the <code>sell_in</code> date was reached</li>
 <li><code>Backstage passes...</code> are also treated as specified, so far</li>
-
 </ul>
 
-</section>
-<section >
-
 <div class="org-src-container">
-
-<pre  class="src src-bash">-------- day <span style="color: #AE81FF;">2</span> --------
+<pre class="src src-bash">-------- day <span style="color: #AE81FF;">2</span> --------
 name, sellIn, quality
 +5 Dexterity Vest, <span style="color: #AE81FF;">8,</span> <span style="color: #AE81FF;">18</span>
 Aged Brie, <span style="color: #AE81FF;">0,</span> <span style="color: #AE81FF;">2</span>
@@ -338,25 +505,17 @@ Conjured Mana Cake, <span style="color: #AE81FF;">0,</span> <span style="color: 
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 These other lines show us some more details:
 </p>
-<ul>
+<ul class="org-ul">
 <li>As described, <code>Aged Brie</code> increases <code>quality</code> twice, once the <code>sell_in</code> date has been reached</li>
 <li>Two of the <code>Backstage passes...</code> items have reached maximum <code>quality</code>, so these can't got it better</li>
 <li>The behaviour of the rest of the items is as expected</li>
-
 </ul>
 
-</section>
-<section >
-
 <div class="org-src-container">
-
-<pre  class="src src-bash">-------- day <span style="color: #AE81FF;">5</span> --------
+<pre class="src src-bash">-------- day <span style="color: #AE81FF;">5</span> --------
 name, sellIn, quality
 +5 Dexterity Vest, <span style="color: #AE81FF;">5,</span> <span style="color: #AE81FF;">15</span>
 Aged Brie, -3, <span style="color: #AE81FF;">8</span>
@@ -382,25 +541,17 @@ Conjured Mana Cake, -3, <span style="color: #AE81FF;">0</span>
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 In this part of the file, we can see the following:
 </p>
-<ul>
+<ul class="org-ul">
 <li><i>Normal</i> items that passed <code>sell_in</code> date, like <code>Elixir of the Mongoose</code> or <code>Conjured Mana Cake</code> here, get 0 <code>quality</code></li>
 <li><code>Backstage passes...</code> having <code>sell_in &lt; 10</code> increase their <code>quality</code> twice</li>
 <li><code>Backstage passes...</code> having passed their <code>sell_in</code>, get 0 <code>quality</code></li>
-
 </ul>
 
-</section>
-<section >
-
 <div class="org-src-container">
-
-<pre  class="src src-bash">-------- day <span style="color: #AE81FF;">10</span> --------
+<pre class="src src-bash">-------- day <span style="color: #AE81FF;">10</span> --------
 name, sellIn, quality
 +5 Dexterity Vest, <span style="color: #AE81FF;">0,</span> <span style="color: #AE81FF;">10</span>
 Aged Brie, -8, <span style="color: #AE81FF;">18</span>
@@ -426,19 +577,12 @@ Conjured Mana Cake, -8, <span style="color: #AE81FF;">0</span>
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 Here, the only thing left to confirm is that <code>Backstage passes...</code> having less than 5 days to <code>sell_in</code>, increase quality by 3.
 </p>
 
-</section>
-<section >
-
 <div class="org-src-container">
-
-<pre  class="src src-bash">-------- day <span style="color: #AE81FF;">26</span> --------
+<pre class="src src-bash">-------- day <span style="color: #AE81FF;">26</span> --------
 name, sellIn, quality
 +5 Dexterity Vest, -16, <span style="color: #AE81FF;">0</span>
 Aged Brie, -24, <span style="color: #AE81FF;">50</span>
@@ -464,26 +608,25 @@ Conjured Mana Cake, -24, <span style="color: #AE81FF;">0</span>
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 Finally, the last two days updates can't increase <code>Aged Brie</code>'s <code>quality</code> over 50.
 </p>
+</div>
+</div>
+</div>
 
-</section>
-</section>
-<section>
-<section id="slide-org2bd1cf9">
-<h3 id="org2bd1cf9">Equip your gear</h3>
+<div id="outline-container-org2f75dc8" class="outline-3">
+<h3 id="org2f75dc8">Equip your gear</h3>
+<div class="outline-text-3" id="text-org2f75dc8">
 <p>
 Before going on, you should also fill up the <code>test_gilded_rose.py</code> with tests for the all use cases&#x2026;
 Be careful, there'll be dragons!
 </p>
+</div>
 
-</section>
-<section id="slide-org20c3d52">
-<h4 id="org20c3d52">Equipping one <i>Normal</i> item</h4>
+<div id="outline-container-org215d91a" class="outline-4">
+<h4 id="org215d91a">Equipping one <i>Normal</i> item</h4>
+<div class="outline-text-4" id="text-org215d91a">
 <p>
 Let's start by discarding current tests in <code>test_gilded_rose.py</code>, and start a new test from scratch for normal items updates.
 </p>
@@ -496,16 +639,12 @@ Remember the <i>AAA</i> principle.
 As a recomendation, avoid to implement too complex test functions, at least, at the beginning. Readability and simplicity are more valuable than completeness and broad scopes.
 </p>
 
-</section>
-<section >
-
 <p>
 Let's take this as example:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_case</span> = <span style="color: #AE81FF;">(</span>
         Item<span style="color: #66D9EF;">(</span><span style="color: #E6DB74;">"+5 Dexterity Vest"</span>, <span style="color: #AE81FF;">2</span>, <span style="color: #AE81FF;">4</span><span style="color: #66D9EF;">)</span>,
@@ -522,16 +661,12 @@ Let's take this as example:
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 Now, let's check this is working fine:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -545,10 +680,12 @@ test_gilded_rose.py .
 
 =========================== 1 passed in 0.01 seconds ===========================
 </pre>
+</div>
+</div>
 
-</section>
-<section id="slide-org3a0f869">
-<h4 id="org3a0f869">Equipping one more <i>Normal</i> item</h4>
+<div id="outline-container-orgbbd1222" class="outline-4">
+<h4 id="orgbbd1222">Equipping one more <i>Normal</i> item</h4>
+<div class="outline-text-4" id="text-orgbbd1222">
 <p>
 The test just created is testing one single case, i.e. a normal item which is not reaching its <code>sell_in</code> date.
 </p>
@@ -557,16 +694,12 @@ The test just created is testing one single case, i.e. a normal item which is no
 Next step will be to modify this test to check what happens when a normal item's <code>sell_in</code> date is reached.
 </p>
 
-</section>
-<section >
-
 <p>
 Starting from the last test, we can do the following:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_cases</span> = <span style="color: #AE81FF;">[</span>
         <span style="color: #66D9EF;">(</span>
@@ -589,16 +722,12 @@ Starting from the last test, we can do the following:
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 Now, let's check this is working fine:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -616,34 +745,31 @@ test_gilded_rose.py .
 <p>
 This is good, but, what will happen when more normal items are to be added?
 </p>
+</div>
+</div>
 
-</section>
-<section id="slide-orgc3881a5">
-<h4 id="orgc3881a5">Equipping more <i>Normal</i> items</h4>
+<div id="outline-container-org5be9da2" class="outline-4">
+<h4 id="org5be9da2">Equipping more <i>Normal</i> items</h4>
+<div class="outline-text-4" id="text-org5be9da2">
 <p>
 The test for normal items is not testing the cases where the item decreases twice as fast, until reaching 0 quality.
 Note that these are two different cases:
 </p>
-<ul>
+<ul class="org-ul">
 <li>decreasing twice as fast</li>
 <li><code>quality</code> can't be negative</li>
-
 </ul>
 
 <p>
 Next step will be to modify the test code to check what happens in these two cases.
 </p>
 
-</section>
-<section >
-
 <p>
 Keeping the paced stepping we have been taking, an option could be just to add the corresponding test cases:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_normal_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_cases</span> = <span style="color: #AE81FF;">[</span>
         <span style="color: #66D9EF;">(</span>
@@ -667,16 +793,12 @@ Keeping the paced stepping we have been taking, an option could be just to add t
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 And it would still work fine:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -689,24 +811,22 @@ collected 1 item
 test_gilded_rose.py .
 =========================== 1 passed in 0.03 seconds ===========================
 </pre>
+</div>
+</div>
 
-</section>
-<section id="slide-org92e173e">
-<h4 id="org92e173e">Equipping <code>Aged Brie</code> items</h4>
+<div id="outline-container-orgbb88830" class="outline-4">
+<h4 id="orgbb88830">Equipping <code>Aged Brie</code> items</h4>
+<div class="outline-text-4" id="text-orgbb88830">
 <p>
 Next step will be to implement tests for <code>Aged Brie</code> items.
 </p>
-
-</section>
-<section >
 
 <p>
 In this case, easiest approach would be to copy the <i>Normal</i> items test function, and modify it with the appropriated test cases:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_aged_brie_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_aged_brie_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_cases</span> = <span style="color: #AE81FF;">[</span>
         <span style="color: #66D9EF;">(</span>
@@ -730,16 +850,12 @@ In this case, easiest approach would be to copy the <i>Normal</i> items test fun
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 This should work also fine:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -753,16 +869,15 @@ test_gilded_rose.py ..
 
 =========================== 2 passed in 0.03 seconds ===========================
 </pre>
+</div>
+</div>
 
-</section>
-<section id="slide-orga1ecb1b">
-<h4 id="orga1ecb1b">Equipping <code>Backstage passes...</code> items</h4>
+<div id="outline-container-org3bbf89b" class="outline-4">
+<h4 id="org3bbf89b">Equipping <code>Backstage passes...</code> items</h4>
+<div class="outline-text-4" id="text-org3bbf89b">
 <p>
 Next step will be to implement tests for <code>Backstage passes...</code> items.
 </p>
-
-</section>
-<section >
 
 <p>
 In this case, one approach would be to repeat what was done for the <code>Aged Brie</code>, but it would be a good moment to add some generalization to the tests code.
@@ -772,16 +887,12 @@ In this case, one approach would be to repeat what was done for the <code>Aged B
 The Act and Assert parts of all the test functions are the same, thus these can be parametrized.
 </p>
 
-</section>
-<section >
-
 <p>
 Let's create the following helper functions:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">update_arrange</span><span style="color: #AE81FF;">(</span>test_cases<span style="color: #AE81FF;">)</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">update_arrange</span><span style="color: #AE81FF;">(</span>test_cases<span style="color: #AE81FF;">)</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">items</span> = <span style="color: #AE81FF;">[</span>test_case<span style="color: #66D9EF;">[</span><span style="color: #AE81FF;">0</span><span style="color: #66D9EF;">]</span> <span style="color: #F92672;">for</span> test_case <span style="color: #F92672;">in</span> test_cases<span style="color: #AE81FF;">]</span>
     <span style="color: #FD971F;">gilded_rose</span> = GildedRose<span style="color: #AE81FF;">(</span>items<span style="color: #AE81FF;">)</span>
@@ -789,16 +900,12 @@ Let's create the following helper functions:
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 And:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">update_assert</span><span style="color: #AE81FF;">(</span>items, test_cases<span style="color: #AE81FF;">)</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">update_assert</span><span style="color: #AE81FF;">(</span>items, test_cases<span style="color: #AE81FF;">)</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Assert</span>
     <span style="color: #F92672;">for</span> i, item <span style="color: #F92672;">in</span> <span style="color: #F92672;">enumerate</span><span style="color: #AE81FF;">(</span>items<span style="color: #AE81FF;">)</span>:
         <span style="color: #F92672;">assert</span> item.sell_in == test_cases<span style="color: #AE81FF;">[</span>i<span style="color: #AE81FF;">][</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">]</span>.sell_in
@@ -806,16 +913,12 @@ And:
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 Then, the test function for all the <code>Backstage passes...</code> cases would look like this:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_backstage_passes_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_backstage_passes_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_cases</span> = <span style="color: #AE81FF;">[</span>
         <span style="color: #66D9EF;">(</span>
@@ -846,12 +949,8 @@ Then, the test function for all the <code>Backstage passes...</code> cases would
 </pre>
 </div>
 
-</section>
-<section >
-
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #FD971F;">items</span>, <span style="color: #FD971F;">gilded_rose</span> = update_arrange<span style="color: #AE81FF;">(</span>test_cases<span style="color: #AE81FF;">)</span>
+<pre class="src src-python"><span style="color: #FD971F;">items</span>, <span style="color: #FD971F;">gilded_rose</span> = update_arrange<span style="color: #AE81FF;">(</span>test_cases<span style="color: #AE81FF;">)</span>
 <span style="color: #75715E;"># </span><span style="color: #75715E;">Act</span>
 gilded_rose.update_quality<span style="color: #AE81FF;">()</span>
 <span style="color: #75715E;"># </span><span style="color: #75715E;">Assert</span>
@@ -859,16 +958,12 @@ update_assert<span style="color: #AE81FF;">(</span>items, test_cases<span style=
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 All other tests can be adapted to use these, and everything should still work:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -882,16 +977,15 @@ test_gilded_rose.py ...
 
 =========================== 3 passed in 0.02 seconds ===========================
 </pre>
+</div>
+</div>
 
-</section>
-<section id="slide-orgd351686">
-<h4 id="orgd351686">Equipping <code>Sulfuras...</code> items</h4>
+<div id="outline-container-org9648787" class="outline-4">
+<h4 id="org9648787">Equipping <code>Sulfuras...</code> items</h4>
+<div class="outline-text-4" id="text-org9648787">
 <p>
 Next step will be to implement tests for <code>Sulfuras...</code> items.
 </p>
-
-</section>
-<section >
 
 <p>
 In this case, the approach of duplicating the test function for <code>Sulfuras...</code> will be enough.
@@ -902,8 +996,7 @@ Then, the test function for all the <code>Sulfuras...</code> cases would look li
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_sulfuras_items</span><span style="color: #AE81FF;">()</span>:
+<pre class="src src-python"><span style="color: #F92672;">def</span> <span style="color: #A6E22E;">test_sulfuras_items</span><span style="color: #AE81FF;">()</span>:
     <span style="color: #75715E;"># </span><span style="color: #75715E;">Arrange</span>
     <span style="color: #FD971F;">test_cases</span> = <span style="color: #AE81FF;">[</span>
         <span style="color: #66D9EF;">(</span>
@@ -919,16 +1012,12 @@ Then, the test function for all the <code>Sulfuras...</code> cases would look li
 </pre>
 </div>
 
-</section>
-<section >
-
 <p>
 All tests should still pass:
 </p>
 
 <div class="org-src-container">
-
-<pre  class="src src-bash">pytest .
+<pre class="src src-bash">pytest .
 </pre>
 </div>
 
@@ -942,147 +1031,172 @@ test_gilded_rose.py ....
 
 =========================== 4 passed in 0.02 seconds ===========================
 </pre>
+</div>
+</div>
+</div>
 
-</section>
-</section>
-<section>
-<section id="slide-org917c315">
-<h3 id="org917c315">Getting down the dungeon</h3>
+<div id="outline-container-org6a0db48" class="outline-3">
+<h3 id="org6a0db48">Getting down the dungeon</h3>
+<div class="outline-text-3" id="text-org6a0db48">
 <p>
 Once you get your tests completed and your <code>golden_master</code> ready, you can go ahead and start refactoring the <code>update_quality</code> method&#x2026;
 Remember running your tests often and good luck!
 </p>
+</div>
 
-</section>
-<section id="slide-org39d1ac4">
-<h4 id="org39d1ac4">Refactor 1</h4>
-<div class="outline-text-4" id="text-org39d1ac4">
+<div id="outline-container-org987be1c" class="outline-4">
+<h4 id="org987be1c">Refactor 1</h4>
+<div class="outline-text-4" id="text-org987be1c">
 </div>
 <ul class="org-ul">
-<li><a id="orgf53184b"></a>Isolate <code>Sulfuras...</code><br />
+<li><a id="org982dd06"></a>Isolate <code>Sulfuras...</code><br />
+<div class="outline-text-5" id="text-org982dd06">
 <p>
 First, add <code>if item.name == sulfuras</code> with continue, and keep the rest of the code, otherwise.
 In that part, remove mentions to <code>Sulfuras...</code>, and fix indentation.
 </p>
+</div>
 </li>
 
-<li><a id="org58c3c5d"></a>Refactor all increasings and decreasings<br />
+<li><a id="orgcb69fd0"></a>Refactor all increasings and decreasings<br />
+<div class="outline-text-5" id="text-orgcb69fd0">
 <p>
 Make all increasings and decreasings use combined assignment.
 </p>
+</div>
 </li>
 
-<li><a id="org23a5166"></a>Isolate <code>Aged Brie</code><br />
+<li><a id="org3bc0e87"></a>Isolate <code>Aged Brie</code><br />
+<div class="outline-text-5" id="text-org3bc0e87">
 <p>
 Add branch in first level branching for <code>Aged Brie</code>.
 Then, remove unnecessary code under the first level <code>else</code>.
 </p>
+</div>
 </li>
 
-<li><a id="orgc2cc921"></a>Isolate <code>Backstage passes...</code><br />
+<li><a id="org2fda8bf"></a>Isolate <code>Backstage passes...</code><br />
+<div class="outline-text-5" id="text-org2fda8bf">
 <p>
 Add branch in first level branching for <code>Backstage passes...</code>.
 Then, remove unnecessary code under the first level <code>else</code>.
 </p>
+</div>
 </li>
 </ul>
+</div>
 
-</section>
-<section id="slide-org47445f0">
-<h4 id="org47445f0">Refactor 1 (II)</h4>
-<div class="outline-text-4" id="text-org47445f0">
+<div id="outline-container-org062e77c" class="outline-4">
+<h4 id="org062e77c">Refactor 1 (II)</h4>
+<div class="outline-text-4" id="text-org062e77c">
 </div>
 <ul class="org-ul">
-<li><a id="org1eb9c0a"></a>Generalize quality increasings and decreasings<br />
+<li><a id="org5143d7f"></a>Generalize quality increasings and decreasings<br />
+<div class="outline-text-5" id="text-org5143d7f">
 <p>
 Create <code>increase_quality(item)</code> and <code>decrease_quality(item)</code> functions implementing the update with the appropriate checks.
 Make use of these functions where appropriate.
 </p>
+</div>
 </li>
 
-<li><a id="orgb9a1c38"></a>Push <code>sell_in</code> decrease to the end of function<br />
+<li><a id="org55f8476"></a>Push <code>sell_in</code> decrease to the end of function<br />
+<div class="outline-text-5" id="text-org55f8476">
 <p>
 Move <code>items.sell_in -= 1</code> to the end of the <code>update_quality</code> method, and update all thresholds.
 </p>
+</div>
 </li>
 
-<li><a id="org915a631"></a>Add <code>get_quality_differential</code> to calculate quality differential for increasings<br />
+<li><a id="org51a0558"></a>Add <code>get_quality_differential</code> to calculate quality differential for increasings<br />
+<div class="outline-text-5" id="text-org51a0558">
 <p>
 Add <code>get_quality_differential</code>, and make <code>increase_quality</code> to use it.
 </p>
+</div>
 </li>
 </ul>
+</div>
 
-</section>
-<section id="slide-orgf758f12">
-<h4 id="orgf758f12">Refactor 1 (III)</h4>
-<div class="outline-text-4" id="text-orgf758f12">
+<div id="outline-container-org4913774" class="outline-4">
+<h4 id="org4913774">Refactor 1 (III)</h4>
+<div class="outline-text-4" id="text-org4913774">
 </div>
 <ul class="org-ul">
-<li><a id="orgba65b53"></a>Add <code>arrange_quality</code> function and use it in <code>increase_quality</code><br />
+<li><a id="org4b9b1e2"></a>Add <code>arrange_quality</code> function and use it in <code>increase_quality</code><br />
+<div class="outline-text-5" id="text-org4b9b1e2">
 <p>
 The <code>arrange_quality</code> function ensures quality is never bigger than 50.
 </p>
+</div>
 </li>
 
-<li><a id="orgd1c7594"></a>Include <code>thresholds</code> to increasings and quality differential calculation<br />
+<li><a id="org76c5a83"></a>Include <code>thresholds</code> to increasings and quality differential calculation<br />
+<div class="outline-text-5" id="text-org76c5a83">
 <p>
 Make <code>get_quality_differential</code> to accept a list of values to repeat the differential increase.
 Make <code>increase_quality</code> to accept the same parameters, and pass it over to <code>get_quality_differential</code> call.
 Update appropriate <code>increase_quality</code> calls to use correct values.
 </p>
+</div>
 </li>
 
-<li><a id="orgd8e5e21"></a>Make <code>decrease_quality</code> to use <code>arrange_quality</code><br />
+<li><a id="org9ca2f71"></a>Make <code>decrease_quality</code> to use <code>arrange_quality</code><br />
+<div class="outline-text-5" id="text-org9ca2f71">
 <p>
 Make <code>arrange_quality</code> to arrange value when it is less than 0.
 Make <code>decrease_quality</code> use it.
 </p>
+</div>
 </li>
 </ul>
+</div>
 
-</section>
-<section id="slide-org5ccecd1">
-<h4 id="org5ccecd1">Refactor 1 (IV)</h4>
-<div class="outline-text-4" id="text-org5ccecd1">
+<div id="outline-container-orgb57c039" class="outline-4">
+<h4 id="orgb57c039">Refactor 1 (IV)</h4>
+<div class="outline-text-4" id="text-orgb57c039">
 </div>
 <ul class="org-ul">
-<li><a id="org430266d"></a>Extend <code>get_quality_differential</code> for decreasings<br />
+<li><a id="org2ee413f"></a>Extend <code>get_quality_differential</code> for decreasings<br />
+<div class="outline-text-5" id="text-org2ee413f">
 <p>
 Make <code>get_quality_differential</code> to calculate it for decreasings.
 </p>
+</div>
 </li>
 
-<li><a id="orgd00e2e7"></a>Add expired to <code>get_quality_differential</code> and make <code>increase_quality</code> use it<br />
+<li><a id="org812775d"></a>Add expired to <code>get_quality_differential</code> and make <code>increase_quality</code> use it<br />
+<div class="outline-text-5" id="text-org812775d">
 <p>
 Put condition in <code>update_quality</code> branch for <code>Backstage passes...</code>.
 </p>
+</div>
 </li>
 </ul>
+</div>
+</div>
 
-</section>
-</section>
-<section>
-<section id="slide-org7a50162">
-<h3 id="org7a50162">The return to the Gilded Rose Inn</h3>
+<div id="outline-container-org0db217b" class="outline-3">
+<h3 id="org0db217b">The return to the Gilded Rose Inn</h3>
+<div class="outline-text-3" id="text-org0db217b">
 <p>
 Your task now is to add the new feature to our system so that we can begin selling a new category of items.
 We have recently signed a supplier of conjured items.
 This requires an update to our system:
 </p>
 
-<ul>
+<ul class="org-ul">
 <li>“Conjured” items degrade in quality twice as fast as normal items</li>
-
 </ul>
 
 <p>
 Same rules on Items class and items property apply here.
 </p>
+</div>
 
-</section>
-<section id="slide-orgdac5ed3">
-<h4 id="orgdac5ed3">Add behaviour to golden master</h4>
+<div id="outline-container-orgf566823" class="outline-4">
+<h4 id="orgf566823">Add behaviour to golden master</h4>
+<div class="outline-text-4" id="text-orgf566823">
 <p>
 You'll need to update golden master file to reflect new behaviour.
 </p>
@@ -1090,10 +1204,12 @@ You'll need to update golden master file to reflect new behaviour.
 <p>
 Run the complete test runner and ensure it now fails in comparing the outputs.
 </p>
+</div>
+</div>
 
-</section>
-<section id="slide-orgf988f15">
-<h4 id="orgf988f15">Add test for <code>Conjured...</code> items</h4>
+<div id="outline-container-orgc206a93" class="outline-4">
+<h4 id="orgc206a93">Add test for <code>Conjured...</code> items</h4>
+<div class="outline-text-4" id="text-orgc206a93">
 <p>
 Let's add tests for <code>Conjured...</code> items, detailing the new behaviour.
 </p>
@@ -1101,20 +1217,24 @@ Let's add tests for <code>Conjured...</code> items, detailing the new behaviour.
 <p>
 Now the complete test runner should fail running pytest.
 </p>
+</div>
+</div>
 
-</section>
-<section id="slide-org6e49fd8">
-<h4 id="org6e49fd8">Refactor code for <code>Conjured...</code> items new behaviour</h4>
+<div id="outline-container-org0be9825" class="outline-4">
+<h4 id="org0be9825">Refactor code for <code>Conjured...</code> items new behaviour</h4>
+<div class="outline-text-4" id="text-org0be9825">
 <p>
 Refactor code to satisfy tests.
 </p>
+</div>
+</div>
+</div>
+</div>
 
-</section>
-</section>
-<section>
-<section id="slide-org13c6d81">
-<h2 id="org13c6d81">Gilded Rose Refactoring Kata Retrospective</h2>
-<ul>
+<div id="outline-container-org8c99681" class="outline-2">
+<h2 id="org8c99681">Gilded Rose Refactoring Kata Retrospective</h2>
+<div class="outline-text-2" id="text-org8c99681">
+<ul class="org-ul">
 <li>Importance of running examples (Golden Master Testing)</li>
 <li>Relevance of business rules vs current implementation</li>
 <li>Importance of tests</li>
@@ -1122,48 +1242,14 @@ Refactor code to satisfy tests.
 <li>Test refactoring</li>
 <li>Continuous Integration</li>
 <li>Ideas to remove the last branch</li>
-
 </ul>
-</section>
-</section>
 </div>
 </div>
-<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
-
-<script>
-// Full list of configuration options available here:
-// https://github.com/hakimel/reveal.js#configuration
-Reveal.initialize({
-
-controls: true,
-progress: true,
-history: false,
-center: true,
-slideNumber: 'c',
-rollingLinks: false,
-keyboard: true,
-overview: true,
-width: 1200,
-height: 800,
-
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
-transitionSpeed: 'default',
-multiplex: {
-    secret: '', // null if client
-    id: '', // id, obtained from socket.io server
-    url: '' // Location of socket.io server
-},
-
-// Optional libraries used to extend on reveal.js
-dependencies: [
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
-});
-</script>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ignasi Fosch</p>
+<p class="date">Created: 2017-10-13 Fri 02:38</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
 </body>
 </html>

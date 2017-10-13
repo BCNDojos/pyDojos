@@ -652,8 +652,10 @@ Refactor code to satisfy tests.
 
 * Gilded Rose Refactoring Kata Retrospective
 
-- Importance of running examples
+- Importance of running examples (Golden Master Testing)
 - Relevance of business rules vs current implementation
 - Importance of tests
 - Test functions distribution
 - Test refactoring
+- Continuous Integration
+- Ideas to remove the last branch
