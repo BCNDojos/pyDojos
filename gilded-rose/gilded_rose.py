@@ -5,37 +5,6 @@ backstage = "Backstage passes to a TAFKAL80ETC concert"
 sulfuras = "Sulfuras, Hand of Ragnaros"
 
 
-def arrange_quality(item):
-    if item.quality > 50:
-        item.quality = 50
-    if item.quality < 0:
-        item.quality = 0
-
-
-def get_quality_differential(item, thresholds=None, expired=False):
-    quality_differential = 1
-    if thresholds is None:
-        thresholds = []
-    if expired:
-        quality_differential = -item.quality
-    else:
-        for threshold in thresholds:
-            if item.sell_in < threshold:
-                quality_differential += 1
-    return quality_differential
-
-
-def increase_quality(item, thresholds=None, expired=None):
-    quality_differential = get_quality_differential(item, thresholds, expired)
-    item.quality += quality_differential
-    arrange_quality(item)
-
-
-def decrease_quality(item, thresholds):
-    item.quality -= get_quality_differential(item, thresholds)
-    arrange_quality(item)
-
-
 class GildedRose(object):
 
     def __init__(self, items):
@@ -43,14 +12,27 @@ class GildedRose(object):
 
     def update_quality(self):
         for item in self.items:
+            delta = 0
             if item.name == sulfuras:
                 continue
             elif item.name == aged_brie:
-                increase_quality(item, [1])
+                if item.quality < 50:
+                    delta = delta + 1
+                if item.sell_in <= 0 and item.quality + delta < 50:
+                    delta = delta + 1
             elif item.name == backstage:
-                increase_quality(item, [11, 6], item.sell_in < 1)
-            elif item.name.startswith("Conjured"):
-                decrease_quality(item, [item.sell_in + 1])
+                if item.quality < 50:
+                    delta = delta + 1
+                if item.sell_in < 11 and item.quality + delta < 50:
+                    delta = delta + 1
+                if item.sell_in < 6 and item.quality + delta < 50:
+                    delta = delta + 1
+                if item.sell_in <= 0:
+                    delta = -item.quality
             else:
-                decrease_quality(item, [1])
-            item.sell_in -= 1
+                if item.quality > 0:
+                    delta = -1
+                if item.sell_in <= 0 and item.quality + delta > 0:
+                    delta = delta - 1
+            item.quality = item.quality + delta
+            item.sell_in = item.sell_in - 1
