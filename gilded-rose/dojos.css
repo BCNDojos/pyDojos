@@ -1,0 +1,12 @@
+section p {
+    text-align: left;
+}
+
+.figure p {
+    text-align: center;
+}
+
+section pre {
+    background-color: white;
+    color: black;
+}
