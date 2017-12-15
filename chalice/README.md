@@ -25,10 +25,17 @@ region=YOUR_REGION (such as us-west-2, us-west-1, etc)
 $ pip install chalice
 $ chalice new-project tank && cd tank
 ```
-5. Deploy "hello world" (Commit #1).
+5. Deploy "hello world". Manually check (Commit #1).
 ```
 $ chalice deploy
 ```
+6. Random tank commander. Manually check.
+7. Manually check as follows:
+```
+curl -XPOST https://o3pl7kr1sd.execute-api.eu-central-1.amazonaws.com/api/command
+```
+8. Check testing the tank API and fix with Cross-Origin Resource Sharing
+   (https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (Commit #2).
 
 
 ## Tank Wars ##
