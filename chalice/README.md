@@ -36,6 +36,12 @@ curl -XPOST https://o3pl7kr1sd.execute-api.eu-central-1.amazonaws.com/api/comman
 ```
 8. Check testing the tank API and fix with Cross-Origin Resource Sharing
    (https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (Commit #2).
+9. Adding requirements. Add required packages into
+   "tank/requirements.txt" as follows (Commit #3):
+```
+pytz==2017.3
+```
+
 
 
 ## Tank Wars ##
