@@ -41,8 +41,7 @@ curl -XPOST https://o3pl7kr1sd.execute-api.eu-central-1.amazonaws.com/api/comman
 ```
 pytz==2017.3
 ```
-
-
+10. Be creative and get lucky in the Dojo's Tank Wars League!!
 
 ## Tank Wars ##
 
