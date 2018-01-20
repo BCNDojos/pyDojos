@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Introduction to SQLAlchemy</title>
+<meta name="author" content="(Ricardo Martinez, Ignasi Fosch)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Introduction to SQLAlchemy</h1><h2 class="author">Ricardo Martinez, Ignasi Fosch</h2><p class="date">Created: 2018-01-20 Sat 12:39</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-orgd5b751c">1. Why ORM?</a>
+<ul>
+<li><a href="#/slide-org56892d4">1.1. What is a ORM?</a></li>
+<li><a href="#/slide-orgab85ae8">1.2. Features</a></li>
+</ul>
+</li>
+<li><a href="#/slide-orgbf191e6">2. Exercise description</a>
+<ul>
+<li><a href="#/slide-orgcb827bf">2.1. Authors:</a></li>
+<li><a href="#/slide-orgdc20bfb">2.2. Books:</a></li>
+<li><a href="#/slide-orge112020">2.3. Requirements to implement</a></li>
+</ul>
+</li>
+<li><a href="#/slide-orgeaea360">3. Example without SQLAlchemy</a></li>
+<li><a href="#/slide-org56a7eb7">4. Tool with SQLAlchemy</a></li>
+<li><a href="#/slide-orgc0c07d2">5. Second iteration</a>
+<ul>
+<li>
+<ul>
+<li><a href="#/slide-org2c71036">5.0.1. Implement the same system, but with multiple authors per book</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<section id="slide-orgd5b751c">
+<h2 id="orgd5b751c"><span class="section-number-2">1</span> Why ORM?</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+</section>
+<section id="slide-org56892d4">
+<h3 id="org56892d4"><span class="section-number-3">1.1</span> What is a ORM?</h3>
+<p>
+ORM, meaning Object Relationship Mapping, is a library providing an abstraction layer over a database and its structure.
+</p>
+
+</section>
+<section id="slide-orgab85ae8">
+<h3 id="orgab85ae8"><span class="section-number-3">1.2</span> Features</h3>
+<p>
+A ORM provides the following:
+</p>
+<ul>
+<li>Database engine abstraction</li>
+<li>Query language abstraction, at least about the details</li>
+<li>Work with objects instead of records, tables, raw data.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgbf191e6">
+<h2 id="orgbf191e6"><span class="section-number-2">2</span> Exercise description</h2>
+<p>
+In this session, we'll work on a very simple application for libraries, providing basic operations on their books.
+The underlying database will have the following tables:
+</p>
+</section>
+<section id="slide-orgcb827bf">
+<h3 id="orgcb827bf"><span class="section-number-3">2.1</span> Authors:</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Field</td>
+<td class="org-left">Description</td>
+</tr>
+
+<tr>
+<td class="org-left">id</td>
+<td class="org-left">Identifier for every record</td>
+</tr>
+
+<tr>
+<td class="org-left">name</td>
+<td class="org-left">Name of the Author</td>
+</tr>
+
+<tr>
+<td class="org-left">birth</td>
+<td class="org-left">Author's date of birth</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="slide-orgdc20bfb">
+<h3 id="orgdc20bfb"><span class="section-number-3">2.2</span> Books:</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Field</td>
+<td class="org-left">Description</td>
+</tr>
+
+<tr>
+<td class="org-left">id</td>
+<td class="org-left">Identifier for every record</td>
+</tr>
+
+<tr>
+<td class="org-left">title</td>
+<td class="org-left">Title of the book</td>
+</tr>
+
+<tr>
+<td class="org-left">author<sub>id</sub></td>
+<td class="org-left">Id of this book's author</td>
+</tr>
+
+<tr>
+<td class="org-left">published<sub>in</sub></td>
+<td class="org-left">Date this book was published</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="slide-orge112020">
+<h3 id="orge112020"><span class="section-number-3">2.3</span> Requirements to implement</h3>
+<p>
+The program we've been requested to write has the following features:
+</p>
+<ul>
+<li>Add, remove, update, and list authors</li>
+<li>Add, remove, and update books</li>
+<li>List books, which should show the author's name</li>
+<li>Search for books which authors were born within a range of dates</li>
+<li>Search for authors who published books within a range of years</li>
+<li>List all books published by an author</li>
+
+</ul>
+
+<p>
+To be time-savvy, we're providing a sqlite database with this structure already setup, and with a few example records.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgeaea360">
+<h2 id="orgeaea360"><span class="section-number-2">3</span> Example without SQLAlchemy</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org56a7eb7">
+<h2 id="org56a7eb7"><span class="section-number-2">4</span> Tool with SQLAlchemy</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc0c07d2">
+<h2 id="orgc0c07d2"><span class="section-number-2">5</span> Second iteration</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+</section>
+<section id="slide-org2c71036">
+<h4 id="org2c71036"><span class="section-number-4">5.0.1</span> Implement the same system, but with multiple authors per book</h4>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
