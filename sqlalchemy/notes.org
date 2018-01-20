@@ -1,0 +1,40 @@
+* Introduction to SQLAlchemy
+** Why ORM?
+*** What is a ORM?
+    ORM, meaning Object Relationship Mapping, is a library providing an abstraction layer over a database and its structure.
+    
+*** Features
+    A ORM provides the following:
+     * Database engine abstraction
+     * Query language abstraction, at least about the details
+     * Work with objects instead of records, tables, raw data.
+
+** Exercise description
+  In this session, we'll work on a very simple application for libraries, providing basic operations on their books.
+  The underlying database will have the following tables:
+    * Authors:
+       | Field | Description                 |
+       | id    | Identifier for every record |
+       | name  | Name of the Author          |
+       | birth | Author's date of birth      |
+    * Books:
+       | Field          | Description                  |
+       | id             | Identifier for every record  |
+       | title          | Title of the book            |
+       | author_id      | Id of this book's author     |
+       | published_in   | Date this book was published |
+  The program we've been requested to write has the following features:
+    * Add, remove, update, and list authors
+    * Add, remove, and update books
+    * List books, which should show the author's name
+    * Search for books which authors were born within a range of dates
+    * Search for authors who published books within a range of years
+    * List all books published by an author
+  To be time-savvy, we're providing a sqlite database with this structure already setup, and with a few example records.
+
+** Example without SQLAlchemy
+   
+** Tool with SQLAlchemy
+   
+** Second iteration
+*** Implement the same system, but with multiple authors per book
