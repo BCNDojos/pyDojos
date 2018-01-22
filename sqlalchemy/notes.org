@@ -11,6 +11,31 @@
      * Query language abstraction, at least about the details
      * Work with objects instead of records, tables, raw data.
 
+** Discussion
+*** http://opensourceforu.com/2009/05/database-programming-in-python/
+    
+*** http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html
+    
+*** https://www.reddit.com/r/Python/comments/5fyr32/orm_or_not/
+
+*** https://www.fullstackpython.com/object-relational-mappers-orms.html
+
+*** http://www.agiledata.org/essays/impedanceMismatch.html
+
+*** http://www.yegor256.com/code-ahead.html
+
+*** https://martinfowler.com/bliki/OrmHate.html
+
+*** https://blog.codinghorror.com/object-relational-mapping-is-the-vietnam-of-computer-science/
+
+*** http://blogs.tedneward.com/post/the-vietnam-of-computer-science/
+
+*** http://seldo.com/weblog/2011/08/11/orm_is_an_antipattern
+
+*** http://techblog.bozho.net/orm-haters-dont-get-it/
+
+*** http://docs.python-guide.org/en/latest/scenarios/db/
+
 * Exercise description
   In this session, we'll work on a very simple application for libraries, providing basic operations on their books.
   The underlying database will have the following tables:
