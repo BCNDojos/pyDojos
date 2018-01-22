@@ -12,11 +12,18 @@ class Author(object):
             (
                 self.id,
                 self.name,
-                self.birth
+                self.birth,
             ),
         )
         conn.commit()
         self.id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+
+    def delete(self,conn):
+        conn.execute(
+            '''DELETE FROM authors WHERE id = ?''',
+            (self.id,),
+        )
+        conn.commit()
 
     @property
     def birth(self):
