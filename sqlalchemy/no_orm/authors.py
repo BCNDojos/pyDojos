@@ -24,6 +24,16 @@ class Authors(object):
             cursor.execute('SELECT * FROM authors')
         return cursor
 
+    def update(self, conn, field, new_value):
+        for row in self.select(conn):
+            author = Author(
+                row['id'],
+                row['name'],
+                row['birth'],
+            )
+            setattr(author, field, new_value)
+            author.save(conn)
+
     def list(self, conn):
         for row in self.select(conn):
             for member in row:
