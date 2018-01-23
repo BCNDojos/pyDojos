@@ -1,5 +1,6 @@
 from __future__ import print_function
 from book import Book
+from authors import Authors
 
 class Books(object):
     def __init__(self, criteria=None):
@@ -36,10 +37,13 @@ class Books(object):
 
     def update(self, conn, field, new_value):
         for row in self.select(conn):
+            author_name = Authors(['name', '=', row[2]]).select(conn).fetchone()[1]
+            if field == "name":
+                author_name = new_value
             book = Book(
                 row['id'],
                 row['title'],
-                row['author_id'],
+                author_name,
                 row['published_in'],
             )
             setattr(book, field, new_value)
