@@ -18,7 +18,7 @@ def get_class_by_tablename(tablename: str):
 
 
 def get_columns(table: str):
-    column_list = [col['name'] for col in inspector.get_columns(table) if col['name'] != 'id']
+    column_list = [col['name'] for col in inspector.get_columns(table)]
     return column_list
 
 
@@ -36,15 +36,14 @@ if __name__ == '__main__':
             break
         else:
             table = tables.get(int(res), None)
+            print(get_columns(table))
             table_class = get_class_by_tablename(table)
 
             if table_class is not None:
-                resultset = session.query(table_class).all()
-                columns = get_columns(table)
-                mapped = [{col: getattr(record, col) for col in columns} for record in resultset]
+                result = session.query(table_class).all()
 
-                print('\n'.join(['-'*20, table.upper().center(20), '-'*20]))
-                print(mapped)
+                for record in result:
+                    print(record.id, record._asdict())
 
                 input('press any key to continue...')
             else:

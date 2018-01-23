@@ -10,7 +10,7 @@ class Author(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     birth = Column(Date)
-    books = relationship('Book', backref='authors')
+    books = relationship('Book', back_populates='author', lazy='joined')
 
     def __init__(self, name: str, birth: date):
         self.name = name
@@ -24,8 +24,10 @@ class Book(Base):
     title = Column(String, nullable=False)
     published_in = Column(Date, nullable=True)
     author_id = Column(Integer, ForeignKey('authors.id'))
+    author = relationship('Author', back_populates='books', lazy='joined', uselist=False)
 
-    def __init__(self, title: str, published_in: date, authors: Author):
+    def __init__(self, title: str, published_in: date, author: Author):
         self.title = title
         self.published_in = published_in
-        self.authors = authors
+        self.author = author
+
