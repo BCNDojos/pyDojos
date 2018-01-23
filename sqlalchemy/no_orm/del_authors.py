@@ -14,5 +14,5 @@ else:
     conn.close()
     sys.exit(1)
 
-authors.list(conn)
+authors.delete(conn)
 conn.close()
