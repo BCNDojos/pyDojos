@@ -56,7 +56,7 @@ class Books(object):
             book = Book(
                 row['id'],
                 row['title'],
-                row['author_id'],
+                None,
                 row['published_in'],
             )
             book.delete(conn)

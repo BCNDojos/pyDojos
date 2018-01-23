@@ -6,10 +6,11 @@ class Book(object):
     def __init__(self, book_id, title, author_name, published_in):
         self.id = book_id
         self.title = title
-        conn = sqlite3.connect('../db/books.db')
-        authors = Authors(['name', '=', author_name])
-        self.author_id = authors.select(conn).fetchone()[0]
-        conn.close()
+        if not author_name is None:
+            conn = sqlite3.connect('../db/books.db')
+            authors = Authors(['name', '=', author_name])
+            self.author_id = authors.select(conn).fetchone()[0]
+            conn.close()
         self.published_in = published_in
 
     def save(self, conn):
