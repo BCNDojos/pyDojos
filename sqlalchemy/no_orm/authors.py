@@ -11,15 +11,30 @@ class Authors(object):
     def select(self, conn):
         cursor = conn.cursor()
         if len(self.__criteria__) > 0:
-            cursor.execute(
-                '''SELECT * FROM authors WHERE {} {} ?'''.format(
-                    self.__criteria__[0],
-                    self.__criteria__[1],
-                ),
-                (
-                    self.__criteria__[2],
-                ),
-            )
+            if self.__criteria__[0] == "published_in":
+                cursor.execute('''
+                    SELECT id, name, birth
+                    FROM authors
+                    WHERE id in (
+                        SELECT author_id
+                        FROM books
+                        WHERE date(published_in) BETWEEN date(?) AND date(?)
+                    )
+                ''', (
+                        self.__criteria__[1],
+                        self.__criteria__[2]
+                    ),
+                )
+            else:
+                cursor.execute(
+                    '''SELECT * FROM authors WHERE {} {} ?'''.format(
+                        self.__criteria__[0],
+                        self.__criteria__[1],
+                    ),
+                    (
+                        self.__criteria__[2],
+                    ),
+                )
         else:
             cursor.execute('SELECT * FROM authors')
         return cursor
