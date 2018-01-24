@@ -1,20 +1,21 @@
 from datetime import date
-from base import Session
-from models import Author, Book
+from base import Session, engine
+from models import Base, Author, Book
 
+Base.metadata.create_all(engine)
 session = Session()
 
-author_1 = Author('J.R.R. Tolkien', date(1892, 1, 3))
-author_2 = Author('J.K. Rowling', date(1965, 7, 31))
-author_3 = Author('Stephen King', date(1947, 9, 21))
+author_1 = Author(name='J.R.R. Tolkien', birth=date(1892, 1, 3))
+author_2 = Author(name='J.K. Rowling', birth=date(1965, 7, 31))
+author_3 = Author(name='Stephen King', birth=date(1947, 9, 21))
 
-book_1 = Book('The Hobbit', date(1937, 9, 21), author_1)
-book_2 = Book('The Lord of the Rings', date(1954, 7, 29), author_1)
-book_3 = Book('Harry Potter', date(1997, 6, 26), author_2)
-book_4 = Book('Carrie', date(1974, 1, 1), author_3)
-book_5 = Book('Salem Lot', date(1975, 1, 1), author_3)
-book_6 = Book('The Shining', date(1977, 1, 1), author_3)
-book_7 = Book('Rage', date(1977, 1, 1), author_3)
+book_1 = Book(title='The Hobbit', published_in=date(1937, 9, 21), author_id=1)
+book_2 = Book(title='The Lord of the Rings', published_in=date(1954, 7, 29), author_id=1)
+book_3 = Book(title='Harry Potter', published_in=date(1997, 6, 26), author_id=2)
+book_4 = Book(title='Carrie', published_in=date(1974, 1, 1), author_id=3)
+book_5 = Book(title='Salem Lot', published_in=date(1975, 1, 1), author_id=3)
+book_6 = Book(title='The Shining', published_in=date(1977, 1, 1), author_id=3)
+book_7 = Book(title='Rage', published_in=date(1977, 1, 1), author_id=3)
 
 session.add(author_1)
 session.add(author_2)
