@@ -1,8 +1,6 @@
 from datetime import date
-from base import Base, engine, Session
+from base import Session
 from models import Author, Book
-
-Base.metadata.create_all(engine)
 
 session = Session()
 
