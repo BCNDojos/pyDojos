@@ -12,20 +12,33 @@ class Books(object):
     def select(self, conn):
         cursor = conn.cursor()
         if len(self.__criteria__) > 0:
-            cursor.execute('''
-                SELECT b.id, title, name, published_in
-                FROM books b
-                JOIN authors a
-                  ON b.author_id = a.id
-                WHERE {} {} ?
-            '''.format(
-                    self.__criteria__[0],
-                    self.__criteria__[1],
-                ),
-                (
-                    self.__criteria__[2],
-                ),
-            )
+            if self.__criteria__[0] == 'birth':
+                cursor.execute('''
+                    SELECT b.id, title, name, birth, published_in
+                    FROM books b
+                    JOIN authors a
+                      ON b.author_id = a.id
+                    WHERE date(birth) BETWEEN date(?) AND date(?)
+                ''', (
+                        self.__criteria__[1],
+                        self.__criteria__[2]
+                    )
+                )
+            else:
+                cursor.execute('''
+                    SELECT b.id, title, name, published_in
+                    FROM books b
+                    JOIN authors a
+                      ON b.author_id = a.id
+                    WHERE {} {} ?
+                '''.format(
+                        self.__criteria__[0],
+                        self.__criteria__[1],
+                    ),
+                    (
+                        self.__criteria__[2],
+                    ),
+                )
         else:
             cursor.execute('''
                 SELECT b.id, title, name, published_in
