@@ -7,11 +7,12 @@
 **** ORM, meaning Object-relational mapping
 **** is a technique enabling to access a RDBMS from an OO language, or style.
 **** Different implementations through different patterns: Active Record, DAO,...
+**** It can refer to the tools (mappers) enabling applying this technique
     
 ** Features
-**** Database engine abstraction, vs DB-API
-**** Query language abstraction
-**** Work with objects instead of records, tables, raw data
+**** Database engine abstraction layer (vs DB-API)
+**** Query language abstraction layer
+**** Work with objects instead of records, tables, scalars
 
 ** Downsides
 **** Impedance mismatch
