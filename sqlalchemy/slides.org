@@ -1,0 +1,98 @@
+#+REVEAL_HLEVEL: 1
+#+TITLE: Introduction to SQLAlchemy
+#+AUTHOR: Ricardo Martinez, Ignasi Fosch
+#+OPTIONS: toc:2
+* Why ORM?
+** What is a ORM?
+**** ORM, meaning Object-relational mapping
+**** is a technique enabling to access a RDBMS from an OO language, or style.
+**** Different implementations through different patterns: Active Record, DAO,...
+    
+** Features
+**** Database engine abstraction, vs DB-API
+**** Query language abstraction
+**** Work with objects instead of records, tables, raw data
+
+** Downsides
+**** Impedance mismatch
+**** Potential for performance reduction
+**** Complexity shift from DB to code
+**** Schema migrations off ORM
+
+** ORMHate
+*** Arguments
+**** Speed/low performance (ORM performance vs tuned SQL SP)
+**** Database upgrades are hard
+**** No need for portability
+**** Takes database interaction away from the objects (session factory)
+**** SQL, or corresponding dialect, is not hidden
+     
+*** Arguments (II)
+**** Difficult to test
+**** Time to learn it
+**** Attribute creep
+**** Foreign keys
+**** Data retrieval (window functions)
+**** Dual schema
+**** Identities
+
+*** Alternative
+**** SQL-speaking objects
+     
+*** From replies
+**** Not all implementations fit the same use cases
+**** Most general cases are well covered, specially the complex huge ERs...
+**** but some situations may require more work
+**** Tradeoffs always depend on PoV
+
+** Links
+**** [[http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html][ORM being an anti-pattern]]
+**** [[https://medium.com/@mantasd/orm-is-an-offensive-anti-pattern-really-42269673d54d][ORM is an Offensive anti-pattern. Really?]]
+**** [[https://www.reddit.com/r/Python/comments/5fyr32/orm_or_not/][Discussion about using SQLAlchemy]]
+**** [[https://www.fullstackpython.com/object-relational-mappers-orms.html][Article about ORMs in Python]]
+**** [[http://www.agiledata.org/essays/impedanceMismatch.html][Object-Relational Impedance mismatch]]
+**** [[https://martinfowler.com/bliki/OrmHate.html][ORMHate]]
+**** [[https://maetl.net/talks/rise-and-fall-of-orm][The rise and fall of ORM]]
+**** [[http://woz.posthaven.com/what-orms-have-taught-me-just-learn-sql][What ORMs have taught me: Just learn SQL]]
+**** [[http://blogs.tedneward.com/post/the-vietnam-of-computer-science/][The Vietnam of Computer Science]]
+**** [[https://blog.codinghorror.com/object-relational-mapping-is-the-vietnam-of-computer-science/][ORM is the Vietnam of Computer Science]]
+**** [[http://seldo.com/weblog/2011/08/11/orm_is_an_antipattern][ORM is an antipattern]]
+**** [[http://techblog.bozho.net/orm-haters-dont-get-it/][ORM Haters don't get it]]
+
+
+* Exercise description
+  In this session, we'll work on a very simple application for libraries, providing basic operations on their books.
+  The underlying database will have the following tables.
+  
+** Authors
+
+       | Field | Description                 |
+       | id    | Identifier for every record |
+       | name  | Name of the Author          |
+       | birth | Author's date of birth      |
+
+** Books:
+
+       | Field        | Description                  |
+       | id           | Identifier for every record  |
+       | title        | Title of the book            |
+       | author_id    | Id of this book's author     |
+       | published_in | Date this book was published |
+
+** Requirements to implement
+  The program we've been requested to write has the following features:
+    * Add, remove, update, and list authors
+    * Add, remove, and update books
+    * List books, which should show the author's name
+    * Search for books which authors were born within a range of dates
+    * Search for authors who published books within a range of years
+    * List all books published by an author
+
+  To be time-savvy, we're providing a sqlite database with this structure already setup, and with a few example records.
+
+  
+* Example without SQLAlchemy
+   
+* Tool with SQLAlchemy
+   
+* Implement multiple authors per book

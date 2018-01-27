@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Introduction to SQLAlchemy</title>
+<meta name="author" content="(Ricardo Martinez, Ignasi Fosch)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Introduction to SQLAlchemy</h1><h2 class="author">Ricardo Martinez, Ignasi Fosch</h2><p class="date">Created: 2018-01-27 Sat 02:08</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-orgc2edab2">1. Why ORM?</a>
+<ul>
+<li><a href="#/slide-orgfec9bfa">1.1. What is a ORM?</a></li>
+<li><a href="#/slide-org9cc6dc9">1.2. Features</a></li>
+<li><a href="#/slide-org8f1a0c9">1.3. Downsides</a></li>
+<li><a href="#/slide-org4c910d0">1.4. ORMHate</a></li>
+<li><a href="#/slide-orge4f2bb9">1.5. Links</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org8f64f55">2. Exercise description</a>
+<ul>
+<li><a href="#/slide-org3e47280">2.1. Authors</a></li>
+<li><a href="#/slide-org376cbca">2.2. Books:</a></li>
+<li><a href="#/slide-orgbb29028">2.3. Requirements to implement</a></li>
+</ul>
+</li>
+<li><a href="#/slide-orgda86f0f">3. Example without SQLAlchemy</a></li>
+<li><a href="#/slide-org24baf77">4. Tool with SQLAlchemy</a></li>
+<li><a href="#/slide-org9924773">5. Second iteration</a></li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<section id="slide-orgc2edab2">
+<h2 id="orgc2edab2"><span class="section-number-2">1</span> Why ORM?</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+</section>
+<section id="slide-orgfec9bfa">
+<h3 id="orgfec9bfa"><span class="section-number-3">1.1</span> What is a ORM?</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="org8677874"></a>ORM, meaning Object-relational mapping<br /></li>
+<li><a id="org0d2bb16"></a>is a technique enabling to access a RDBMS from an OO language, or style.<br /></li>
+<li><a id="org148c711"></a>Different implementations through different patterns: Active Record, DAO,&#x2026;<br /></li>
+</ol>
+
+</section>
+<section id="slide-org9cc6dc9">
+<h3 id="org9cc6dc9"><span class="section-number-3">1.2</span> Features</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<ol class="org-ol">
+<li><a id="orgcc87657"></a>Database engine abstraction, vs DB-API<br /></li>
+<li><a id="orgcec1b9d"></a>Query language abstraction<br /></li>
+<li><a id="org08a0bb7"></a>Work with objects instead of records, tables, raw data<br /></li>
+</ol>
+
+</section>
+<section id="slide-org8f1a0c9">
+<h3 id="org8f1a0c9"><span class="section-number-3">1.3</span> Downsides</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<ol class="org-ol">
+<li><a id="org577b16b"></a>Impedance mismatch<br /></li>
+<li><a id="org72842a6"></a>Potential for performance reduction<br /></li>
+<li><a id="org81e2f6b"></a>Complexity shift from DB to code<br /></li>
+<li><a id="org5d213e4"></a>Schema migrations off ORM<br /></li>
+</ol>
+
+</section>
+<section id="slide-org4c910d0">
+<h3 id="org4c910d0"><span class="section-number-3">1.4</span> ORMHate</h3>
+<div class="outline-text-3" id="text-1-4">
+</div>
+</section>
+<section id="slide-org243152f">
+<h4 id="org243152f"><span class="section-number-4">1.4.1</span> Arguments</h4>
+<div class="outline-text-4" id="text-1-4-1">
+</div>
+<ol class="org-ol">
+<li><a id="org347f1d3"></a>Speed/low performance (ORM performance vs tuned SQL SP)<br /></li>
+<li><a id="org82c37d3"></a>Database upgrades are hard<br /></li>
+<li><a id="org3571b3e"></a>No need for portability<br /></li>
+<li><a id="orgd414f23"></a>Takes database interaction away from the objects (session factory)<br /></li>
+<li><a id="orge2a3953"></a>SQL, or corresponding dialect, is not hidden<br /></li>
+</ol>
+
+</section>
+<section id="slide-orge45f3ee">
+<h4 id="orge45f3ee"><span class="section-number-4">1.4.2</span> Arguments (II)</h4>
+<div class="outline-text-4" id="text-1-4-2">
+</div>
+<ol class="org-ol">
+<li><a id="orgd5f4aff"></a>Difficult to test<br /></li>
+<li><a id="orge014656"></a>Time to learn it<br /></li>
+<li><a id="orgdbd5b32"></a>Attribute creep<br /></li>
+<li><a id="org2e394b3"></a>Foreign keys<br /></li>
+<li><a id="orga1c4025"></a>Data retrieval (window functions)<br /></li>
+<li><a id="org69ac08e"></a>Dual schema<br /></li>
+<li><a id="org7d54791"></a>Identities<br /></li>
+</ol>
+
+</section>
+<section id="slide-org448bd3b">
+<h4 id="org448bd3b"><span class="section-number-4">1.4.3</span> Alternative</h4>
+<div class="outline-text-4" id="text-1-4-3">
+</div>
+<ol class="org-ol">
+<li><a id="org4519753"></a>SQL-speaking objects<br /></li>
+</ol>
+
+</section>
+<section id="slide-org833be59">
+<h4 id="org833be59"><span class="section-number-4">1.4.4</span> From replies</h4>
+<div class="outline-text-4" id="text-1-4-4">
+</div>
+<ol class="org-ol">
+<li><a id="orgfdc04bf"></a>Not all implementations fit the same use cases<br /></li>
+<li><a id="org33ada8b"></a>Most general cases are well covered, specially the complex huge ERs&#x2026;<br /></li>
+<li><a id="orgc77361a"></a>but some situations may require more work<br /></li>
+<li><a id="org7ef8ccc"></a>Tradeoffs always depend on PoV<br /></li>
+</ol>
+
+</section>
+<section id="slide-orge4f2bb9">
+<h3 id="orge4f2bb9"><span class="section-number-3">1.5</span> Links</h3>
+<div class="outline-text-3" id="text-1-5">
+</div>
+<ol class="org-ol">
+<li><a id="org897b0b2"></a><a href="http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html">ORM being an anti-pattern</a><br /></li>
+<li><a id="orge9707bb"></a><a href="https://medium.com/@mantasd/orm-is-an-offensive-anti-pattern-really-42269673d54d">ORM is an Offensive anti-pattern. Really?</a><br /></li>
+<li><a id="org041a54a"></a><a href="https://www.reddit.com/r/Python/comments/5fyr32/orm_or_not/">Discussion about using SQLAlchemy</a><br /></li>
+<li><a id="orgdccdeeb"></a><a href="https://www.fullstackpython.com/object-relational-mappers-orms.html">Article about ORMs in Python</a><br /></li>
+<li><a id="orgdc9ffd0"></a><a href="http://www.agiledata.org/essays/impedanceMismatch.html">Object-Relational Impedance mismatch</a><br /></li>
+<li><a id="org907e662"></a><a href="https://martinfowler.com/bliki/OrmHate.html">ORMHate</a><br /></li>
+<li><a id="org2456fd2"></a><a href="https://maetl.net/talks/rise-and-fall-of-orm">The rise and fall of ORM</a><br /></li>
+<li><a id="org732aadd"></a><a href="http://woz.posthaven.com/what-orms-have-taught-me-just-learn-sql">What ORMs have taught me: Just learn SQL</a><br /></li>
+<li><a id="orgb192b5f"></a><a href="http://blogs.tedneward.com/post/the-vietnam-of-computer-science/">The Vietnam of Computer Science</a><br /></li>
+<li><a id="org4e5b0e5"></a><a href="https://blog.codinghorror.com/object-relational-mapping-is-the-vietnam-of-computer-science/">ORM is the Vietnam of Computer Science</a><br /></li>
+<li><a id="orgbf7e715"></a><a href="http://seldo.com/weblog/2011/08/11/orm_is_an_antipattern">ORM is an antipattern</a><br /></li>
+<li><a id="org76a3752"></a><a href="http://techblog.bozho.net/orm-haters-dont-get-it/">ORM Haters don't get it</a><br /></li>
+</ol>
+
+
+</section>
+</section>
+<section>
+<section id="slide-org8f64f55">
+<h2 id="org8f64f55"><span class="section-number-2">2</span> Exercise description</h2>
+<p>
+In this session, we'll work on a very simple application for libraries, providing basic operations on their books.
+The underlying database will have the following tables.
+</p>
+
+</section>
+<section id="slide-org3e47280">
+<h3 id="org3e47280"><span class="section-number-3">2.1</span> Authors</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Field</td>
+<td class="org-left">Description</td>
+</tr>
+
+<tr>
+<td class="org-left">id</td>
+<td class="org-left">Identifier for every record</td>
+</tr>
+
+<tr>
+<td class="org-left">name</td>
+<td class="org-left">Name of the Author</td>
+</tr>
+
+<tr>
+<td class="org-left">birth</td>
+<td class="org-left">Author's date of birth</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="slide-org376cbca">
+<h3 id="org376cbca"><span class="section-number-3">2.2</span> Books:</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Field</td>
+<td class="org-left">Description</td>
+</tr>
+
+<tr>
+<td class="org-left">id</td>
+<td class="org-left">Identifier for every record</td>
+</tr>
+
+<tr>
+<td class="org-left">title</td>
+<td class="org-left">Title of the book</td>
+</tr>
+
+<tr>
+<td class="org-left">author<sub>id</sub></td>
+<td class="org-left">Id of this book's author</td>
+</tr>
+
+<tr>
+<td class="org-left">published<sub>in</sub></td>
+<td class="org-left">Date this book was published</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="slide-orgbb29028">
+<h3 id="orgbb29028"><span class="section-number-3">2.3</span> Requirements to implement</h3>
+<p>
+The program we've been requested to write has the following features:
+</p>
+<ul>
+<li>Add, remove, update, and list authors</li>
+<li>Add, remove, and update books</li>
+<li>List books, which should show the author's name</li>
+<li>Search for books which authors were born within a range of dates</li>
+<li>Search for authors who published books within a range of years</li>
+<li>List all books published by an author</li>
+
+</ul>
+
+<p>
+To be time-savvy, we're providing a sqlite database with this structure already setup, and with a few example records.
+</p>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgda86f0f">
+<h2 id="orgda86f0f"><span class="section-number-2">3</span> Example without SQLAlchemy</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org24baf77">
+<h2 id="org24baf77"><span class="section-number-2">4</span> Tool with SQLAlchemy</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org9924773">
+<h2 id="org9924773"><span class="section-number-2">5</span> Second iteration</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+</section>
+<section id="slide-org5f00f1d">
+<h4 id="org5f00f1d"><span class="section-number-4">5.0.1</span> Implement with multiple authors per book</h4>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
