@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Coins kata with pytest</title>
+<meta name="author" content="(Ignasi Fosch)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="extra.css"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Coins kata with pytest</h1><h2 class="author">Ignasi Fosch</h2><p class="date">Created: 2018-03-24 Sat 04:59</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org29a9891">Basic changer</a></li>
+<li><a href="#/slide-org47c8bdd">Many coins changer</a></li>
+<li><a href="#/slide-orgecae30e">Identify tests</a></li>
+<li><a href="#/slide-orgc578f51">Optimal changer</a></li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<section id="slide-org29a9891">
+<h2 id="org29a9891">Basic changer</h2>
+<div class="outline-text-2" id="text-org29a9891">
+</div>
+</section>
+<section id="slide-org1fb7a82">
+<h3 id="org1fb7a82">Code skeleton</h3>
+<p>
+Basic <code>coins.py</code>:
+</p>
+<pre class="example">
+def change(amount):
+    pass
+</pre>
+</section>
+<section id="slide-org5d4bbb0">
+<h3 id="org5d4bbb0">Assertions with pytest</h3>
+<p>
+How to make assertions with pytest:
+</p>
+<pre class="example">
+import coins
+
+def test_change():
+    results = coins.change(0.05)
+    assert '5c' in results
+</pre>
+</section>
+<section id="slide-orgea492ac">
+<h3 id="orgea492ac">Executing pytest</h3>
+<p>
+Executing pytest:
+</p>
+<pre class="example">
+$ pytest .
+=========================== test session starts ======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 1 item
+
+test_coins.py F                                                 [100%]
+
+================================== FAILURES ==========================
+_______________________________ test_5c_coins ________________________
+
+    def test_5c_coins():
+        money = coins.change(0.05)
+&gt;       assert '5c' in money
+E       TypeError: argument of type 'NoneType' is not iterable
+
+test_coins.py:13: TypeError
+========================= 1 failed in 0.02 seconds ===================
+</pre>
+</section>
+<section id="slide-orgd9c96b4">
+<h3 id="orgd9c96b4">First iteration</h3>
+<p>
+Implement <code>change</code> and corresponding test for amount of 0.05.
+Remember the rules:
+</p>
+<ul>
+<li>Amount will be a real number with two decimal positions.</li>
+<li>Changer has infinite coins.</li>
+
+</ul>
+</section>
+<section id="slide-org2ac3e56">
+<h3 id="org2ac3e56">First iteration example</h3>
+<pre class="example">
+def change(amount):
+    return { '5c': 1, }
+</pre>
+<p>
+And the test:
+</p>
+<pre class="example">
+import coins
+
+def test_change():
+    results = coins.change(0.05)
+    assert '5c' in results
+    assert results['5c'] == 0
+</pre>
+<p>
+And the results:
+</p>
+<pre class="example">
+$ py.test
+========================= test session starts ========================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 1 item
+
+test_coins.py .                                                 [100%]
+
+========================= 1 passed in 0.01 seconds ===================
+</pre>
+</section>
+<section id="slide-orgd260f83">
+<h3 id="orgd260f83">Second iteration</h3>
+<p>
+Implement test for 5c and 10c.
+</p>
+</section>
+<section id="slide-org66b9f6c">
+<h3 id="org66b9f6c">Second iteration example</h3>
+<p>
+The test:
+</p>
+<pre class="example">
+import coins
+
+def coin_value(coin):
+    if coin.rfind('c') &gt; 0:
+        return float(coin.strip('c')) / 100
+    else:
+        return float(coin.strip('e'))
+
+def test_coins_generic():
+    amounts = [0.05, 0.10]
+    for amount in amounts:
+        money = coins.change(amount)
+        changed_amount = round(sum(
+            [q * coin_value(k) for k, q in money.items()]), 2)
+        assert changed_amount == amount
+</pre>
+</section>
+<section >
+<p>
+This test will fail:
+</p>
+<pre class="example">
+$ py.test
+========================= test session starts ========================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 1 item
+
+test_coins.py F                                                [100%]
+
+=============================== FAILURES =============================
+__________________________ test_coins_generic ________________________
+
+    def test_coins_generic():
+        amounts = [0.05, 0.10]
+        for amount in amounts:
+            money = coins.change(amount)
+            changed_amount = round(sum([q * coin_value(k) for k, q ...
+&gt;           assert changed_amount == amount
+E           assert 0.05 == 0.1
+
+test_coins.py:21: AssertionError
+========================= 1 failed in 0.03 seconds ====================
+</pre>
+</section>
+<section id="slide-org8bfb34f">
+<h3 id="org8bfb34f">Third iteration</h3>
+<p>
+Fix the code to satisfy the test
+</p>
+</section>
+<section id="slide-orgdbbf5fb">
+<h3 id="orgdbbf5fb">Third iteration example</h3>
+<p>
+The code:
+</p>
+<pre class="example">
+def change(amount):
+    return { '5c': (amount * 100) / 5, }
+</pre>
+<p>
+And the execution now:
+</p>
+<pre class="example">
+$ py.test
+========================== test session starts ======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 1 item
+
+test_coins.py .                                               [100%]
+
+======================== 1 passed in 0.01 seconds ===================
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-org47c8bdd">
+<h2 id="org47c8bdd">Many coins changer</h2>
+<div class="outline-text-2" id="text-org47c8bdd">
+</div>
+</section>
+<section id="slide-org459df5d">
+<h3 id="org459df5d">Parametrizing</h3>
+<p>
+When the test must run on different test cases with the same behaviour:
+</p>
+<pre class="example">
+import pytest
+from datetime import datetime, timedelta
+
+testdata = [
+    (datetime(2001, 12, 12), datetime(2001, 12, 11), timedelta(1)),
+    (datetime(2001, 12, 11), datetime(2001, 12, 12), timedelta(-1)),
+]
+
+@pytest.mark.parametrize("a,b,expected", testdata)
+def test_timedistance_v0(a, b, expected):
+    diff = a - b
+    assert diff == expected
+</pre>
+</section>
+<section >
+<p>
+When executing tests <code>--collect-only</code> can provide a list of the cases:
+</p>
+<pre class="example">
+$ pytest test_time.py --collect-only
+======================== test session starts ========================
+platform linux -- Python 3.x.y, pytest-3.x.y, py-1.x.y, pluggy-0.x.y
+rootdir: $REGENDOC_TMPDIR, inifile:
+collected 8 items
+&lt;Module 'test_time.py'&gt;
+  &lt;Function 'test_timedistance_v0[a0-b0-expected0]'&gt;
+  &lt;Function 'test_timedistance_v0[a1-b1-expected1]'&gt;
+
+===================== no tests ran in 0.12 seconds ==================
+</pre>
+</section>
+<section id="slide-orga4763e1">
+<h3 id="orga4763e1">Fourth iteration</h3>
+<p>
+Implement another test to parametrize testing with many different amounts.
+</p>
+</section>
+<section id="slide-org47ed705">
+<h3 id="org47ed705">Fourth iteration example</h3>
+<pre class="example">
+import pytest
+...
+
+amounts = [0.05, 0.10, 0.15, 0.20, 0.25, 2.35, 3.00, 5.50]
+
+@pytest.mark.parametrize("amount", amounts)
+def test_coins_parametrized(amount):
+    for amount in amounts:
+        money = coins.change(amount)
+        changed_amount = round(sum(
+             [q * coin_value(k) for k, q in money.items()]), 2)
+        assert changed_amount == amount
+</pre>
+<p>
+And execution:
+</p>
+<pre class="example">
+$ py.test
+========================= test session starts =======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 9 items
+
+test_coins.py .........                                        [100%]
+
+======================== 9 passed in 0.02 seconds ====================
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgecae30e">
+<h2 id="orgecae30e">Identify tests</h2>
+<div class="outline-text-2" id="text-orgecae30e">
+</div>
+</section>
+<section id="slide-org44561d3">
+<h3 id="org44561d3">Assertion messages</h3>
+<p>
+Using assertion messages the errors can be easily identified:
+</p>
+<pre class="example">
+def test_simple():
+    assert 1 == 0, "1 is not equal to 0"
+</pre>
+<p>
+When this fails:
+</p>
+<pre class="example">
+$ py.test
+========================== test session starts =======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 1 item
+
+test_coins.py F                                                [100%]
+
+================================ FAILURES ============================
+_______________________________ test_simple __________________________
+
+    def test_simple():
+&gt;       assert 1 == 0, "1 is not equal to 0"
+E       AssertionError: 1 is not equal to 0
+E       assert 1 == 0
+
+test_coins.py:32: AssertionError
+======================== 1 failed in 0.02 seconds ====================
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgc578f51">
+<h2 id="orgc578f51">Optimal changer</h2>
+<div class="outline-text-2" id="text-orgc578f51">
+</div>
+</section>
+<section id="slide-org10301e0">
+<h3 id="org10301e0">Fifth iteration</h3>
+<p>
+Add a helper function to determine if the amount is optimal.
+Modify <code>change</code> to be optimal, i.e. return the minimum amount of coins possible.
+</p>
+</section>
+<section id="slide-orgf3426ce">
+<h3 id="orgf3426ce">Fifth iteration example</h3>
+<p>
+The helper function:
+</p>
+<pre class="example">
+def quantity_is_optimal(money):
+    """
+    This function iterates over all possible coins checking
+    if the amount for this coin and quantity used might be
+    the same with a higher value coin.
+    """
+    accum = 0.0
+    for i, k in enumerate(coins.coins):
+        if k in money.keys():
+            accum += money[k] * coin_value(k)
+            if i + 1 &lt; len(coins.coins):
+                n = coins.coins[i + 1]
+                if n in money.keys() and money[n] &gt; 0:
+                    next_value = money[n] * coin_value(n)
+                else:
+                    next_value = 1 * coin_value(n)
+            else:
+                return True
+            if accum &gt;= next_value:
+                return False
+    return True
+</pre>
+</section>
+<section >
+<p>
+Then, add the assertion in the test:
+</p>
+<pre class="example">
+amounts = [0.05, 0.10, 0.15, 0.20, 0.25, 2.35, 3.00, 5.50]
+
+@pytest.mark.parametrize("amount", amounts)
+def test_coins_parametrized(amount):
+    for amount in amounts:
+        money = coins.change(amount)
+        changed_amount = round(sum(
+            [q * coin_value(k) for k, q in money.items()]), 2)
+        assert changed_amount == amount,
+            "The changed amount should be {}".format(changed_amount)
+        assert quantity_is_optimal(money),
+            "Coin types used are not optimal for {}".format(amount)
+</pre>
+</section>
+<section >
+<p>
+This will make tests fail:
+</p>
+<pre class="example">
+$ py.test
+========================== test session starts =======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 9 items
+
+test_coins.py .FFFFFFFF                                        [100%]
+
+================================ FAILURES ============================
+_____________________ test_coins_parametrized[0.05] __________________
+
+amount = 0.1
+
+    @pytest.mark.parametrize("amount", amounts)
+    def test_coins_parametrized(amount):
+        for amount in amounts:
+            money = coins.change(amount)
+            changed_amount = round(sum([q * coin_value(k) for k, q i...
+            assert changed_amount == amount, "The changed amount sho...
+&gt;           assert quantity_is_optimal(money), "Coin types used are ...
+E           AssertionError: Coin types used are not optimal for 0.1
+E           assert False
+E            +  where False = quantity_is_optimal({'5c': 2.0})
+
+test_coins.py:52: AssertionError
+</pre>
+</section>
+<section >
+<p>
+Then fix the code:
+</p>
+<pre class="example">
+coins = ['5c', '10c', '20c', '50c', '1e', '2e']
+denominations = {'5c': 0.05, '10c': 0.1, '20c': 0.2, '50c': 0.5,
+    '1e': 1, '2e': 2}
+reversed_coins = coins.copy()
+reversed_coins.reverse()
+
+def change(amount):
+    result = {}
+    for coin in reversed_coins:
+        result[coin] = amount / denominations[coin]
+        amount -= result[coin] * denominations[coin]
+        amount = round(amount, 2)
+    return result
+</pre>
+</section>
+<section >
+<p>
+Now the tests must pass:
+</p>
+<pre class="example">
+$ py.test
+========================== test session starts =======================
+platform linux -- Python 3.6.4, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+rootdir: /home/ifosch/src/github.com/BCNDojos/pyDojos/coins, inifile:
+collected 9 items
+
+test_coins.py .........                                        [100%]
+
+======================== 9 passed in 0.02 seconds ====================
+</pre>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
+});
+</script>
+</body>
+</html>
