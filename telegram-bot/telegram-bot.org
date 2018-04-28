@@ -1,0 +1,517 @@
+#+TITLE: Building a Telegram bot
+#+AUTHOR: Ignasi Fosch
+#+OPTIONS: toc:1 num:nil reveal_title_slide:"<h1>%t</h1><br/><h3>%a</h3>"
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_THEME: night
+#+REVEAL_PLUGINS: (highlight)
+#+REVEAL_HLEVEL: 1
+#+REVEAL_EXTRA_CSS: extra.css
+
+* Requirements
+  - Telegram, both client and account
+  - virtual environment with:
+    + Python 3.6
+    + python-telegram-bot
+
+* Initial setup
+  :PROPERTIES:
+  :header-args: :shebang #!/bin/bash
+  :header-args+: :results raw output
+  :header-args+: :wrap info
+  :header-args+: :exports none
+  :header-args+: :noweb yes
+  :END:
+** Register your bot
+   - Open a conversation to [[https://telegram.me/botfather][Telegram's BotFather]] 
+   - Tell @Botfather ~/newbot~
+   - Reply it with your bot's name, ending in ~bot~
+   - Copy your Access Token from @BotFather's response
+   - Keep your bot token in exported environment variable, in some rc file
+     #+BEGIN_EXAMPLE
+       export TELEGRAM_BOT_TOKEN=<your bot token>
+     #+END_EXAMPLE
+
+** Create your virtual environment
+   - Using conda:
+     #+BEGIN_SRC sh :results silent :exports code
+       conda create -y -n mybot python=3.6
+     #+END_SRC
+   - Using virtualenv:
+     #+BEGIN_SRC sh :results silent :exports code
+       virtualenv mybot
+     #+END_SRC
+   - For pipenv users, this step can be skipped
+
+** Activate and install your virtual environment
+   - For virtualenv and conda:
+     #+BEGIN_SRC sh :results silent :exports code
+       source activate mybot
+       pip install python-telegram-bot
+     #+END_SRC
+   - For pipenv users:
+     #+BEGIN_SRC sh :results silent :exports code
+       pipenv install python-telegram-bot
+     #+END_SRC
+
+** Test setup
+   Run the following in Python interactive interpreter:
+   #+BEGIN_SRC python :exports code
+     import os
+     import telegram
+
+     bot = telegram.Bot(token=os.getenv("TELEGRAM_BOT_TOKEN"))
+     print(bot.get_me())
+   #+END_SRC
+
+   You should get something like the following:
+   #+BEGIN_EXAMPLE
+     {'id': 562474777, 'first_name': 'mybot', 'is_bot': True, 'username': 'ignasibot'}
+   #+END_EXAMPLE
+
+* Into the Telegram Bot API
+  :PROPERTIES:
+  :header-args: :shebang #!/bin/bash
+  :header-args+: :results raw output
+  :header-args+: :wrap info
+  :header-args+: :exports none
+  :header-args+: :noweb yes
+  :END:
+
+** Basics of Telegram Bot API
+   - Third party applications running inside Telegram
+   - Users can interact with bots by sending them:
+     + Messages
+     + Commands
+     + Inline requests
+   - Work on HTTPS requests to Telegram Bot API
+
+** What can bots do?
+   - Get customized notifications and news
+   - Integrate with other services
+   - Accept payments from Telegram users
+   - Crete custom tools
+   - Build single- and multiplayer games
+   - Build social services
+   - ... Bot not the dishes, bots are terrible at doing the dishes
+
+** How do bots work?
+   - Special accounts, without phone number to set up
+   - User interaction happens by:
+     + Sending messages and commands to bots in private or group chat
+     + Via inline queries (like the ~@gif~ bot
+   - The bot receives the messages, commands and queries via HTTPS:
+     + Using a poll for updates
+     + Using WebHooks
+
+** Differences with humans
+   - No online status or last seen
+   - Labelled as 'bot'
+   - *Very* limited cloud storage, messages are removed
+   - Can't initiate conversation with users
+   - Users must either add them to a group or send them a message first
+   - Their user handles always end in 'bot'
+   - When in a group, they do not receive all messages by default
+   - Never eat, sleep or complain
+
+** Specific features
+   - Different kinds of keyboards
+   - Default commands
+   - Deep linking
+   - Text formatting
+   - Inline queries
+   - Payments
+   - HTML5 games
+   - Location and phone number
+     
+* The Little Parrot bot
+  :PROPERTIES:
+  :header-args: :shebang #!/bin/bash
+  :header-args+: :results raw output
+  :header-args+: :wrap info
+  :header-args+: :exports none
+  :header-args+: :noweb yes
+  :END:
+  
+** First Iteration
+    For this first iteration, we'll build a bot that will just reply our messages with the same text.
+
+** The Little Parrot bot code
+*** From scratch
+   - Open a file called ~little_parrot_bot.py~
+   - In the first line, put a *shebang* like:
+     #+BEGIN_EXAMPLE
+       #!/usr/bin/env python
+     #+END_EXAMPLE
+
+*** Initialize the bot
+    - The ~Updater~ is a wrapping object by ~python-telegram-bot~ package
+    - This provides with an interface to the ~Bot~ object
+    - Providen interface helps programmer focus on developing features
+
+      #+NAME: updater_libs
+      #+BEGIN_SRC python :exports code
+        import os
+        from telegram.ext import Updater
+      #+END_SRC
+
+      #+NAME: updater_creation
+      #+BEGIN_SRC python :exports code
+        updater = Updater(token=os.getenv("TELEGRAM_BOT_TOKEN"))
+      #+END_SRC
+
+*** Getting the dispatcher
+    - The ~Dispatcher~ is the object getting the updates
+    - It dispatches the received messages to handlers
+      
+      #+NAME: dispatcher_creation
+      #+BEGIN_SRC python :exports code
+        dispatcher = updater.dispatcher
+      #+END_SRC
+
+*** First command: ~/start~
+    - This command is *asked* by [[https://core.telegram.org/bots#global-commands][Telegram]]
+    - It allows users to start interacting with our bot
+
+      #+NAME:start_function
+      #+BEGIN_SRC python :exports code
+        def start(bot, update):
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text="I'm a bot, please talk to me!"
+            )
+      #+END_SRC
+
+*** Second command: ~/help~
+    - This command is *asked* by [[https://core.telegram.org/bots#global-commands][Telegram]]
+    - It allows users to ask our bot for help on how it works
+
+      #+NAME:help_function
+      #+BEGIN_SRC python :exports code
+        def bot_help(bot, update):
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text="I will just reply to your messages"
+            )
+      #+END_SRC
+
+*** Implement the reply to message
+    - This function will be replying messages sent to the bot
+
+      #+NAME:echo_function
+      #+BEGIN_SRC python :exports code
+        def echo(bot, update):
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text=update.message.text
+            )
+      #+END_SRC
+
+*** Wire the handlers into the dispatcher
+    - This makes the bot to reply to commands and messages
+
+      #+NAME:command_handler_libs
+      #+BEGIN_SRC python :exports code
+        from telegram.ext import CommandHandler, MessageHandler, Filters
+      #+END_SRC
+
+      #+NAME:add_start_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_handler(CommandHandler('start', start))
+      #+END_SRC
+
+      #+NAME:add_help_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_handler(CommandHandler('help', bot_help))
+      #+END_SRC
+
+      #+NAME:add_echo_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_handler(MessageHandler(Filters.text, echo))
+      #+END_SRC
+
+*** Start the polling
+    - This will make the bot start attending requests
+
+      #+NAME:start_polling
+      #+BEGIN_SRC python :exports code
+        updater.start_polling()
+      #+END_SRC
+
+*** Run your bot and test it in Telegram
+    - Make the file executable
+    - Run this in the terminal:
+      #+BEGIN_SRC sh :results silent :exports code
+        ./little_parrot_bot.py
+      #+END_SRC
+    - Now go to Telegram and look for you bot's username
+    - Click on ~START~
+    - Test the commands and sending a message to get the reply
+
+  #+BEGIN_SRC python :shebang #!/usr/bin/env python :exports none :tangle little_parrot_bot.py
+    <<updater_libs>>
+
+    <<command_handler_libs>>
+
+    <<start_function>>
+
+    <<help_function>>
+
+    <<echo_function>>
+
+    <<updater_creation>>
+
+    <<dispatcher_creation>>
+
+    <<add_start_handler>>
+
+    <<add_help_handler>>
+
+    <<add_echo_handler>>
+
+    <<start_polling>>
+  #+END_SRC
+
+* The Pomodoro bot
+  :PROPERTIES:
+  :header-args: :shebang #!/bin/bash
+  :header-args+: :results raw output
+  :header-args+: :wrap info
+  :header-args+: :exports none
+  :header-args+: :noweb yes
+  :END:
+  
+** Second Iteration
+    For this second iteration, we'll build a bot that will allow to set timed reminders.
+
+** The Pomodoro bot code
+*** From scratch
+   - Open a file called ~pomodoro_bot.py~
+   - Again, in the first line, put a *shebang* like:
+     #+BEGIN_EXAMPLE
+       #!/usr/bin/env python
+     #+END_EXAMPLE
+
+*** Initialize the bot
+      #+BEGIN_SRC python :exports code
+        <<updater_libs>>
+      #+END_SRC
+
+      #+BEGIN_SRC python :exports code
+        <<updater_creation>>
+      #+END_SRC
+
+*** Getting the dispatcher
+      #+BEGIN_SRC python :exports code
+        <<dispatcher_creation>>
+      #+END_SRC
+
+*** Enable logging
+      #+NAME:import_logging
+      #+BEGIN_SRC python :exports code
+        import logging
+      #+END_SRC
+      #+NAME:enable_logging
+      #+BEGIN_SRC python :exports code
+        logging.basicConfig(
+          format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+          level=logging.INFO
+        )
+        logger = logging.getLogger(__name__)
+      #+END_SRC
+
+*** First command: ~/start~
+      #+NAME:start_function2
+      #+BEGIN_SRC python :exports code
+        def start(bot, update):
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text="Hi! I set alarms"
+            )
+      #+END_SRC
+
+*** Second command: ~/help~
+      #+NAME:help_function2
+      #+BEGIN_SRC python :exports code
+        def bot_help(bot, update):
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text="""
+                    Use /set s to set an alarm in s seconds.
+                    Use /unset to unset the alarm.
+                """
+            )
+      #+END_SRC
+
+*** Alarm function
+    - This function will be beeping in the message when the time arrives
+
+      #+NAME:alarm_function
+      #+BEGIN_SRC python :exports code
+        def alarm(bot, job):
+            bot.send_message(job.context, text='Beep!')
+      #+END_SRC
+
+*** Third command: ~/set~
+      #+NAME:set_timer_function
+      #+BEGIN_SRC python :exports code
+        def set_timer(bot, update, args, job_queue, chat_data):
+            chat_id = update.message.chat_id
+            try:
+                # args[0] should contain the time for the timer in seconds
+                due = int(args[0])
+                if due < 0:
+                    update.message.reply_text(
+                        'Sorry we can not go back to future!'
+                    )
+                    return
+                job = job_queue.run_once(alarm, due, context=chat_id)
+                chat_data['job'] = job
+                update.message.reply_text('Timer successfully set!')
+            except (IndexError, ValueError):
+                update.message.reply_text('Usage: /set seconds')
+      #+END_SRC
+
+*** Fourth command: ~/unset~
+      #+NAME:unset_timer_function
+      #+BEGIN_SRC python :exports code
+        def unset_timer(bot, update, chat_data):
+            if 'job' not in chat_data:
+                update.message.reply_text('You have no active timer')
+                return
+
+            job = chat_data['job']
+            job.schedule_removal()
+            del chat_data['job']
+
+            update.message.reply_text('Timer successfully unset!')
+      #+END_SRC
+
+*** Wire the handlers into the dispatcher
+      #+NAME:command_handler_libs2
+      #+BEGIN_SRC python :exports code
+        from telegram.ext import CommandHandler
+      #+END_SRC
+
+      #+BEGIN_SRC python :exports code
+        <<add_start_handler>>
+      #+END_SRC
+
+      #+BEGIN_SRC python :exports code
+        <<add_help_handler>>
+      #+END_SRC
+
+      #+NAME:add_set_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_handler(CommandHandler(
+            'set',
+            set_timer,
+            pass_args=True,
+            pass_job_queue=True,
+            pass_chat_data=True,
+        ))
+      #+END_SRC
+
+      #+NAME:add_unset_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_handler(CommandHandler(
+            'unset',
+            unset_timer,
+            pass_chat_data=True,
+        ))
+      #+END_SRC
+
+*** Error handler
+    - This will make the bot to handle update errors
+
+      #+NAME:error_function
+      #+BEGIN_SRC python :exports code
+        def error(bot, update, error):
+            logger.warning(
+                'Update "%s" caused error "%s"',
+                update,
+                error,
+            )
+      #+END_SRC
+
+*** Wire the error handler into the dispatcher
+    - This will make the bot start attending requests
+
+      #+NAME:add_error_handler
+      #+BEGIN_SRC python :exports code
+        dispatcher.add_error_handler(error)
+      #+END_SRC
+
+*** Start the polling
+    - This will make the bot start attending requests
+
+      #+BEGIN_SRC python :exports code
+        <<start_polling>>
+      #+END_SRC
+
+*** Make the bot to stop gracefully
+    - This will make the bot to stop gracefully on SIGINT, SIGTERM or SIGABRT
+
+      #+NAME:stop_on_int_term_abrt
+      #+BEGIN_SRC python :exports code
+        updater.idle()
+      #+END_SRC
+
+*** Run your bot and test it in Telegram
+    - Make the file executable
+    - Run this in the terminal:
+      #+BEGIN_SRC sh :results silent :exports code
+        ./pomodoro_bot.py
+      #+END_SRC
+    - Now go to Telegram and the chat with your bot
+    - Test the commands and setting an alarm, and unsetting
+    - Use Ctrl+c to make it stop
+
+  #+BEGIN_SRC python :shebang #!/usr/bin/env python :exports none :tangle pomodoro_bot.py
+    <<updater_libs>>
+
+    <<command_handler_libs2>>
+
+    <<import_logging>>
+
+    <<enable_logging>>
+
+    <<start_function2>>
+
+    <<help_function2>>
+
+    <<alarm_function>>
+
+    <<error_function>>
+
+    <<set_timer_function>>
+
+    <<unset_timer_function>>
+
+    <<updater_creation>>
+
+    <<dispatcher_creation>>
+
+    <<add_start_handler>>
+
+    <<add_help_handler>>
+
+    <<add_set_handler>>
+
+    <<add_unset_handler>>
+
+    <<add_error_handler>>
+
+    <<start_polling>>
+
+    <<stop_on_int_term_abrt>>
+  #+END_SRC
+
+* References
+  - [[https://www.codementor.io/garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay][Building a Chatbot using Telegram and Python]]
+  - [[https://github.com/python-telegram-bot/python-telegram-bot][python-telegram-bot]]
+  - [[https://core.telegram.org/bots/api][Telegram Bot API]]
+
+#+BEGIN_SRC sh :results silent :exports none
+  conda info -e | grep mybot && conda env remove -y -n mybot
+  rm *.py
+#+END_SRC
