@@ -1,6 +1,6 @@
 import socket
 from flask import Flask, jsonify, abort, request
-from translate.db import translateDB
+from db.db import translateDB
 
 app = Flask(__name__)
 
