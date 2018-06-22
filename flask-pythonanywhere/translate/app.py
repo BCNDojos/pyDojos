@@ -1,19 +1,18 @@
 import socket
 from flask import Flask, jsonify, abort, request
-# from db import translateDB
-import db
+from translate.db import translateDB
 
 app = Flask(__name__)
 
 @app.route('/words')
 def get_all_words():
-    result = db.translateDB.get_all_translations()
+    result = translateDB.get_all_translations()
 
     return jsonify({ 'words': result }), 200
 
 @app.route('/words/<string:word>')
 def get_word(word):
-    result = db.translateDB.get_translation(word)
+    result = translateDB.get_translation(word)
 
     if result is not None:
         return jsonify({ 'trans': result }), 200
@@ -27,7 +26,7 @@ def post_word():
     trans = request_data.get('trans')
 
     if word and trans:
-        db.translateDB.add_translation(word, trans)
+        translateDB.add_translation(word, trans)
         return jsonify({ word: trans }), 200
 
     return jsonify({ 'message': 'error' }), 400
@@ -38,8 +37,8 @@ def put_word(word):
     trans = request_data.get('trans')
 
     if word and trans:
-        if db.translateDB.get_translation(word) is not None:
-            db.translateDB.update_translation(word, trans)
+        if translateDB.get_translation(word) is not None:
+            translateDB.update_translation(word, trans)
             return jsonify({ word: trans }), 200
 
         return jsonify({ 'message': 'error' }), 404
@@ -49,8 +48,8 @@ def put_word(word):
 @app.route('/words/<string:word>', methods=['DELETE'])
 def delete_word(word):
     if word:
-        if db.translateDB.get_translation(word) is not None:
-            db.translateDB.remove_translation(word)
+        if translateDB.get_translation(word) is not None:
+            translateDB.remove_translation(word)
             return jsonify({ 'message': 'deleted' }), 200
 
         return jsonify({ 'message': 'error' }), 404
