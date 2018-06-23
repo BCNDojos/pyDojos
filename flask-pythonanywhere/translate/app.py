@@ -1,6 +1,13 @@
+import os
+import sys
+
+path = os.getcwd()
+if path not in sys.path:
+    sys.path.append(path)
+
 import socket
 from flask import Flask, jsonify, abort, request
-from db.db import translateDB
+from db import translateDB
 
 app = Flask(__name__)
 
