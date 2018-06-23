@@ -1,13 +1,13 @@
 import os
 import sys
+import socket
+from flask import Flask, jsonify, abort, request
 
 path = os.getcwd() + '/../'
 print(path)
 if path not in sys.path:
     sys.path.append(path)
 
-import socket
-from flask import Flask, jsonify, abort, request
 from translate.db import translateDB
 
 app = Flask(__name__)

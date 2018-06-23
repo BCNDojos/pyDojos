@@ -28,7 +28,7 @@ class TranslateDB(object):
         sql = 'SELECT word, trans FROM {table}' \
             .format(table=self.__table_name)
         self.__execute(sql)
-        result = self.__cursor.fetchall()
+        result = [{ row[0]: row[1] } for row in self.__cursor.fetchall()]
         self.__close_db()
 
         return result
