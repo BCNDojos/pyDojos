@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>PyBCN October Dojo: Pyzmq workshop</title>
+<meta name="author" content="(Ignasi Fosch)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/blood.css" id="theme"/>
+
+<link rel="stylesheet" href="./dojos.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1>PyBCN October Dojo: Pyzmq workshop</h1><h2>Ignasi Fosch</h2>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org5f998c2">1. About this Dojo session</a></li>
+<li><a href="#/slide-org377a3d3">2. Basic 0mq</a></li>
+<li><a href="#/slide-orgf7fe57f">3. First exercise: Guessing the city</a></li>
+<li><a href="#/slide-org20cc10e">4. More depth</a></li>
+<li><a href="#/slide-orgca4fa58">5. Second exercise: Getting temperature</a></li>
+<li><a href="#/slide-orgf51665b">6. TL;DR</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org5f998c2">
+<h2 id="org5f998c2"><span class="section-number-2">1</span> About this Dojo session</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+</section>
+<section id="slide-org688285d">
+<h3 id="org688285d"><span class="section-number-3">1.1</span> About me</h3>
+<ul>
+<li>Sysadmin, not a developer</li>
+<li>I do quite a lot of code, but for tooling, operations, and orchestration</li>
+<li>Don't take me very seriously</li>
+
+</ul>
+
+</section>
+<section id="slide-org1436fc0">
+<h3 id="org1436fc0"><span class="section-number-3">1.2</span> This is not a Dojo, sorry</h3>
+<ul>
+<li>It is more a workshop</li>
+<li>Specific about 0mq, and more concretely, pyzmq</li>
+
+</ul>
+
+</section>
+<section id="slide-orgb0dad80">
+<h3 id="orgb0dad80"><span class="section-number-3">1.3</span> PyBCN Dojos goals still valid</h3>
+<ul>
+<li>Have fun coding with friends</li>
+<li>Learn about techniques and tools from others</li>
+<li>Share knowledge with others</li>
+<li>Practice new techniques and tools in a safe environment</li>
+
+</ul>
+
+</section>
+<section id="slide-org150f718">
+<h3 id="org150f718"><span class="section-number-3">1.4</span> In memoriam Pieter Hintjens</h3>
+<ul>
+<li>Pieter Hintjens, creator of 0mq, died two years ago, October 4th 2016</li>
+<li>Belgian software developer, author and past president of FFII, fighter against software patents</li>
+<li>Author of AMQP, founder of Digital Standards Organization, and editor of the RestMS</li>
+<li>This session is very loosely based on a surprise workshop he gave at EuroPython 2014 Berlin</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org377a3d3">
+<h2 id="org377a3d3"><span class="section-number-2">2</span> Basic 0mq</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+</section>
+<section id="slide-org474d49d">
+<h3 id="org474d49d"><span class="section-number-3">2.1</span> What it is, and what it is not?</h3>
+<ul>
+<li>Library, not a system or a server</li>
+<li>Asynchronous</li>
+<li>Message queues, providing API for message exchange between processes</li>
+<li>High performant</li>
+
+</ul>
+
+</section>
+<section id="slide-org9b6049f">
+<h3 id="org9b6049f"><span class="section-number-3">2.2</span> What it is for?</h3>
+<ul>
+<li>Building distributed or concurrent applications or systems</li>
+<li>Provide message queues</li>
+<li>Client-server and P2P models</li>
+<li>Communicate system components built in different languages</li>
+<li>Why not&#x2026;
+<ul>
+<li>Traditional sockets?</li>
+<li>HTTP APIs?</li>
+
+</ul></li>
+<li>Socket reusage and the 4th layer</li>
+
+</ul>
+
+</section>
+<section id="slide-orgd5d4d1c">
+<h3 id="orgd5d4d1c"><span class="section-number-3">2.3</span> How to get it installed?</h3>
+<ul>
+<li>Standard install</li>
+
+</ul>
+<pre class="example">
+pip install pyzmq
+</pre>
+
+<ul>
+<li>Cool version:</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-bash">pipenv install pyzmq
+</pre>
+</div>
+
+</section>
+<section id="slide-org3a468dd">
+<h3 id="org3a468dd"><span class="section-number-3">2.4</span> How does it look like?</h3>
+<ul>
+<li>Resembling Berkeley sockets</li>
+<li>Hello World server</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> time
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">server</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.REP<span style="color: #AE81FF;">)</span>
+server.bind<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'tcp://*:5555'</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #FD971F;">message</span> = server.recv<span style="color: #AE81FF;">()</span>.decode<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'Received request: {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>message<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    time.sleep<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">)</span>
+    server.send<span style="color: #AE81FF;">(</span>b<span style="color: #E6DB74;">'World'</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+<section >
+
+<ul>
+<li>Hello World client</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> time
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">socket</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.REQ<span style="color: #AE81FF;">)</span>
+socket.connect<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://localhost:5555"</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">for</span> request <span style="color: #F92672;">in</span> <span style="color: #F92672;">range</span><span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">10</span><span style="color: #AE81FF;">)</span>:
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'Sending request {}...'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>request<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    socket.send<span style="color: #AE81FF;">(</span>b<span style="color: #E6DB74;">'Hello'</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #FD971F;">response</span> = socket.recv<span style="color: #AE81FF;">()</span>.decode<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'Received reply {}: {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>request, response<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf7fe57f">
+<h2 id="orgf7fe57f"><span class="section-number-2">3</span> First exercise: Guessing the city</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+</section>
+<section id="slide-org1b28832">
+<h3 id="org1b28832"><span class="section-number-3">3.1</span> Description</h3>
+<ul>
+<li>Two processes: Hider and seeker</li>
+<li>Hider chooses a random city from a list in a file, and listens for messages with a city name each. It replies 'CORRECT' or 'INCORRECT', depending on the match. If there's a match, chooses another city</li>
+<li>Seeker connects to a specific local port, chooses a city, or accepts one as argument, and issues its guess. It will repeat, until it's guessed</li>
+
+</ul>
+
+</section>
+<section id="slide-org600c3cf">
+<h3 id="org600c3cf"><span class="section-number-3">3.2</span> Hider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> random
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">cities</span> = <span style="color: #F92672;">open</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'cities.txt'</span><span style="color: #AE81FF;">)</span>.readlines<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">city</span> = random.choice<span style="color: #AE81FF;">(</span>cities<span style="color: #AE81FF;">)</span>.strip<span style="color: #AE81FF;">()</span>
+<span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[HIDER] City chosen is {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>city<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">server</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.REP<span style="color: #AE81FF;">)</span>
+server.bind<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'tcp://*:5555'</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #FD971F;">message</span> = server.recv<span style="color: #AE81FF;">()</span>.decode<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[HIDER] Received request: {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>message<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[HIDER] Current city: {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>city<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #FD971F;">reply</span> = <span style="color: #E6DB74;">'INCORRECT'</span>
+    <span style="color: #F92672;">if</span> message == city:
+        <span style="color: #FD971F;">reply</span> = <span style="color: #E6DB74;">'CORRECT'</span>
+        <span style="color: #FD971F;">city</span> = random.choice<span style="color: #AE81FF;">(</span>cities<span style="color: #AE81FF;">)</span>.strip<span style="color: #AE81FF;">()</span>
+        <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[HIDER] City chosen is {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>city<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    server.send<span style="color: #AE81FF;">(</span><span style="color: #F92672;">str</span>.encode<span style="color: #66D9EF;">(</span>reply<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org770a5c6">
+<h3 id="org770a5c6"><span class="section-number-3">3.3</span> Seeker</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> random
+<span style="color: #F92672;">import</span> sys
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">cities</span> = <span style="color: #F92672;">open</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'cities.txt'</span><span style="color: #AE81FF;">)</span>.readlines<span style="color: #AE81FF;">()</span>
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">socket</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.REQ<span style="color: #AE81FF;">)</span>
+socket.connect<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'tcp://localhost:5555'</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #FD971F;">response</span> = <span style="color: #E6DB74;">''</span>
+<span style="color: #F92672;">while</span> response != <span style="color: #E6DB74;">'CORRECT'</span>:
+    <span style="color: #FD971F;">city</span> = random.choice<span style="color: #AE81FF;">(</span>cities<span style="color: #AE81FF;">)</span>.strip<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[SEEKER] Guessed city is {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>city<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    socket.send<span style="color: #AE81FF;">(</span><span style="color: #F92672;">str</span>.encode<span style="color: #66D9EF;">(</span>city<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #FD971F;">response</span> = socket.recv<span style="color: #AE81FF;">()</span>.decode<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">'[SEEKER] Received reply {}: {}'</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>city, response<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org20cc10e">
+<h2 id="org20cc10e"><span class="section-number-2">4</span> More depth</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+</section>
+<section id="slide-org00e91ae">
+<h3 id="org00e91ae"><span class="section-number-3">4.1</span> Serialization: Many faces</h3>
+<ul>
+<li><code>send</code> and <code>recv</code> have corresponding <code>send_string</code> and <code>recv_string</code></li>
+<li>There are others, like <code>send_json</code>, or <code>send_pyobj</code>, with corresponding <code>recv_json</code> and <code>recv_pyobj</code></li>
+<li>Serializing functions can be used for customization</li>
+
+</ul>
+
+</section>
+<section id="slide-orgb0cdd74">
+<h3 id="orgb0cdd74"><span class="section-number-3">4.2</span> Pub Sub</h3>
+<ul>
+<li>Publisher sending updates to many Subscribers</li>
+<li>Updates categorized</li>
+<li>Subscriber can opt on specific updates</li>
+<li>Publisher</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> zmq
+<span style="color: #F92672;">import</span> time
+<span style="color: #F92672;">import</span> sys
+
+<span style="color: #FD971F;">port</span> = <span style="color: #E6DB74;">"5556"</span>
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">1</span>:
+    <span style="color: #FD971F;">port</span> =  sys.argv<span style="color: #AE81FF;">[</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">]</span>
+    <span style="color: #F92672;">int</span><span style="color: #AE81FF;">(</span>port<span style="color: #AE81FF;">)</span>
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">socket</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.PUB<span style="color: #AE81FF;">)</span>
+socket.bind<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://*:%s"</span> % port<span style="color: #AE81FF;">)</span>
+<span style="color: #FD971F;">topic</span> = <span style="color: #AE81FF;">0</span>
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #FD971F;">topic</span>, <span style="color: #FD971F;">now</span> = topic + <span style="color: #AE81FF;">1</span>, time.ctime<span style="color: #AE81FF;">()</span>
+    socket.send_string<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"1 update {} {}"</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>topic, now<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    socket.send_string<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"2 update {} {}"</span>.<span style="color: #F92672;">format</span><span style="color: #66D9EF;">(</span>topic, now<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    time.sleep<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+<section >
+
+<ul>
+<li>Subscriber</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> sys
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">sock</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.SUB<span style="color: #AE81FF;">)</span>
+
+<span style="color: #FD971F;">topic</span> = <span style="color: #E6DB74;">"1"</span>
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">1</span>:
+    <span style="color: #FD971F;">topic</span> = sys.argv<span style="color: #AE81FF;">[</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">]</span>
+sock.setsockopt_string<span style="color: #AE81FF;">(</span>zmq.SUBSCRIBE, topic<span style="color: #AE81FF;">)</span>
+sock.connect<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://127.0.0.1:5556"</span><span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #FD971F;">message</span> = sock.recv_string<span style="color: #AE81FF;">()</span>
+    <span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span>message<span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgca4fa58">
+<h2 id="orgca4fa58"><span class="section-number-2">5</span> Second exercise: Getting temperature</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+</section>
+<section id="slide-org4c0e1ca">
+<h3 id="org4c0e1ca"><span class="section-number-3">5.1</span> Description</h3>
+<ul>
+<li>Build a temperature server publishing zip codes (9999 to 10005), with temperatures</li>
+<li>Then add a subscriber subscribing to a zip code, and calculating the average temperature for the last 5 records</li>
+<li>Try to make the client capable to connect to more than one server</li>
+
+</ul>
+
+</section>
+<section id="slide-orgcfc1f32">
+<h3 id="orgcfc1f32"><span class="section-number-3">5.2</span> Weather server</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> zmq
+<span style="color: #F92672;">import</span> random
+<span style="color: #F92672;">import</span> sys
+<span style="color: #F92672;">import</span> time
+
+<span style="color: #FD971F;">port</span> = <span style="color: #E6DB74;">"5556"</span>
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">1</span>:
+    <span style="color: #FD971F;">port</span> =  sys.argv<span style="color: #AE81FF;">[</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">]</span>
+    <span style="color: #F92672;">int</span><span style="color: #AE81FF;">(</span>port<span style="color: #AE81FF;">)</span>
+
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">socket</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.PUB<span style="color: #AE81FF;">)</span>
+socket.bind<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://*:%s"</span> % port<span style="color: #AE81FF;">)</span>
+<span style="color: #F92672;">while</span> <span style="color: #AE81FF;">True</span>:
+    <span style="color: #FD971F;">topic</span> = random.randrange<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">9999</span>,<span style="color: #AE81FF;">10005</span><span style="color: #AE81FF;">)</span>
+    <span style="color: #FD971F;">messagedata</span> = random.randrange<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">1</span>,<span style="color: #AE81FF;">215</span><span style="color: #AE81FF;">)</span> - <span style="color: #AE81FF;">80</span>
+    socket.send_string<span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"%d %d"</span> % <span style="color: #66D9EF;">(</span>topic, messagedata<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+    time.sleep<span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org93855f0">
+<h3 id="org93855f0"><span class="section-number-3">5.3</span> Weather client</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span style="color: #F92672;">import</span> sys
+<span style="color: #F92672;">import</span> zmq
+
+<span style="color: #FD971F;">port</span> = <span style="color: #E6DB74;">"5556"</span>
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">1</span>:
+    <span style="color: #FD971F;">port</span> =  sys.argv<span style="color: #AE81FF;">[</span><span style="color: #AE81FF;">1</span><span style="color: #AE81FF;">]</span>
+    <span style="color: #F92672;">int</span><span style="color: #AE81FF;">(</span>port<span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">2</span>:
+    <span style="color: #FD971F;">port1</span> =  sys.argv<span style="color: #AE81FF;">[</span><span style="color: #AE81FF;">2</span><span style="color: #AE81FF;">]</span>
+    <span style="color: #F92672;">int</span><span style="color: #AE81FF;">(</span>port1<span style="color: #AE81FF;">)</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">Socket to talk to server</span>
+<span style="color: #FD971F;">context</span> = zmq.Context<span style="color: #AE81FF;">()</span>
+<span style="color: #FD971F;">socket</span> = context.socket<span style="color: #AE81FF;">(</span>zmq.SUB<span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"Collecting updates from weather server..."</span><span style="color: #AE81FF;">)</span>
+socket.connect <span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://localhost:%s"</span> % port<span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">if</span> <span style="color: #F92672;">len</span><span style="color: #AE81FF;">(</span>sys.argv<span style="color: #AE81FF;">)</span> &gt; <span style="color: #AE81FF;">2</span>:
+    socket.connect <span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"tcp://localhost:%s"</span> % port1<span style="color: #AE81FF;">)</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">Subscribe to zipcode, default is NYC, 10001</span>
+<span style="color: #FD971F;">topicfilter</span> = <span style="color: #E6DB74;">"10001"</span>
+socket.setsockopt_string<span style="color: #AE81FF;">(</span>zmq.SUBSCRIBE, topicfilter<span style="color: #AE81FF;">)</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">Process 5 updates</span>
+<span style="color: #FD971F;">total_value</span> = <span style="color: #AE81FF;">0</span>
+<span style="color: #F92672;">for</span> update_nbr <span style="color: #F92672;">in</span> <span style="color: #F92672;">range</span> <span style="color: #AE81FF;">(</span><span style="color: #AE81FF;">5</span><span style="color: #AE81FF;">)</span>:
+    <span style="color: #FD971F;">string</span> = socket.recv<span style="color: #AE81FF;">()</span>
+    <span style="color: #FD971F;">topic</span>, <span style="color: #FD971F;">messagedata</span> = string.split<span style="color: #AE81FF;">()</span>
+    <span style="color: #FD971F;">total_value</span> += <span style="color: #F92672;">int</span><span style="color: #AE81FF;">(</span>messagedata<span style="color: #AE81FF;">)</span>
+
+<span style="color: #F92672;">print</span><span style="color: #AE81FF;">(</span><span style="color: #E6DB74;">"Avg temp for zip '%s' was %dF"</span> % <span style="color: #66D9EF;">(</span>topicfilter, total_value / update_nbr<span style="color: #66D9EF;">)</span><span style="color: #AE81FF;">)</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgf51665b">
+<h2 id="orgf51665b"><span class="section-number-2">6</span> TL;DR</h2>
+<ul>
+<li><a href="http://zguide.zeromq.org/py:all">0MQ - The Guide</a></li>
+<li><a href="https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/">Learning 0MQ with pyzmq</a></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
