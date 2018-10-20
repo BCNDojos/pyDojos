@@ -1,0 +1,275 @@
+#+AUTHOR: Ignasi Fosch
+#+TITLE: PyBCN October Dojo: Pyzmq workshop
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_HLEVEL: 1
+#+REVEAL_EXTRA_CSS: ./dojos.css
+#+OPTIONS: toc:1
+#+OPTIONS: reveal_progress:t
+#+OPTIONS: reveal_title_slide:"<h1>%t</h1><h2>%a</h2>"
+#+OPTIONS: reveal_width:1200
+#+OPTIONS: reveal_height:800
+#+REVEAL_THEME: blood
+#+REVEAL_PLUGINS: (notes)
+
+* About this Dojo session
+** About me
+   - Sysadmin, not a developer
+   - I do quite a lot of code, but for tooling, operations, and orchestration
+   - Don't take me very seriously
+
+** This is not a Dojo, sorry
+   - It is more a workshop
+   - Specific about 0mq, and more concretely, pyzmq
+
+** PyBCN Dojos goals still valid
+   - Have fun coding with friends
+   - Learn about techniques and tools from others
+   - Share knowledge with others
+   - Practice new techniques and tools in a safe environment
+
+** In memoriam Pieter Hintjens
+   - Pieter Hintjens, creator of 0mq, died two years ago, October 4th 2016
+   - Belgian software developer, author and past president of FFII, fighter against software patents
+   - Author of AMQP, founder of Digital Standards Organization, and editor of the RestMS
+   - This session is very loosely based on a surprise workshop he gave at EuroPython 2014 Berlin
+
+* Basic 0mq
+** What it is, and what it is not?
+   - Library, not a system or a server
+   - Asynchronous
+   - Message queues, providing API for message exchange between processes
+   - High performant
+
+** What it is for?
+   - Building distributed or concurrent applications or systems
+   - Provide message queues
+   - Client-server and P2P models
+   - Communicate system components built in different languages
+   - Why not...
+     + Traditional sockets?
+     + HTTP APIs?
+   - Socket reusage and the 4th layer
+
+** How to get it installed?
+   - Standard install
+   #+BEGIN_EXAMPLE
+     pip install pyzmq
+   #+END_EXAMPLE
+
+   - Cool version:
+   #+BEGIN_SRC bash :export code
+     pipenv install pyzmq
+   #+END_SRC
+
+** How does it look like?
+   - Resembling Berkeley sockets
+   - Hello World server
+   #+BEGIN_SRC python :exports code :tangle helloworld_server.py
+     import time
+     import zmq
+
+     context = zmq.Context()
+     server = context.socket(zmq.REP)
+     server.bind('tcp://*:5555')
+
+     while True:
+         message = server.recv().decode()
+         print('Received request: {}'.format(message))
+         time.sleep(1)
+         server.send(b'World')
+   #+END_SRC
+
+#+REVEAL: split
+
+   - Hello World client
+   #+BEGIN_SRC python :exports code :tangle helloworld_client.py
+     import time
+     import zmq
+
+     context = zmq.Context()
+     socket = context.socket(zmq.REQ)
+     socket.connect("tcp://localhost:5555")
+
+     for request in range(10):
+         print('Sending request {}...'.format(request))
+         socket.send(b'Hello')
+         response = socket.recv().decode()
+         print('Received reply {}: {}'.format(request, response))
+   #+END_SRC
+   
+* First exercise: Guessing the city
+** Description
+   - Two processes: Hider and seeker
+   - Hider chooses a random city from a list in a file, and listens for messages with a city name each. It replies 'CORRECT' or 'INCORRECT', depending on the match. If there's a match, chooses another city
+   - Seeker connects to a specific local port, chooses a city, or accepts one as argument, and issues its guess. It will repeat, until it's guessed
+     
+** Hider
+
+#+BEGIN_SRC python :exports code :tangle hider.py
+  import random
+  import zmq
+
+  cities = open('cities.txt').readlines()
+  city = random.choice(cities).strip()
+  print('[HIDER] City chosen is {}'.format(city))
+
+  context = zmq.Context()
+  server = context.socket(zmq.REP)
+  server.bind('tcp://*:5555')
+
+  while True:
+      message = server.recv().decode()
+      print('[HIDER] Received request: {}'.format(message))
+      print('[HIDER] Current city: {}'.format(city))
+      reply = 'INCORRECT'
+      if message == city:
+          reply = 'CORRECT'
+          city = random.choice(cities).strip()
+          print('[HIDER] City chosen is {}'.format(city))
+      server.send(str.encode(reply))
+#+END_SRC
+
+** Seeker
+
+#+BEGIN_SRC python :exports code :tangle seeker.py
+  import random
+  import sys
+  import zmq
+
+  cities = open('cities.txt').readlines()
+
+  context = zmq.Context()
+  socket = context.socket(zmq.REQ)
+  socket.connect('tcp://localhost:5555')
+
+  response = ''
+  while response != 'CORRECT':
+      city = random.choice(cities).strip()
+      print('[SEEKER] Guessed city is {}'.format(city))
+      socket.send(str.encode(city))
+      response = socket.recv().decode()
+      print('[SEEKER] Received reply {}: {}'.format(city, response))
+#+END_SRC
+
+* More depth
+** Serialization: Many faces
+  - ~send~ and ~recv~ have corresponding ~send_string~ and ~recv_string~
+  - There are others, like ~send_json~, or ~send_pyobj~, with corresponding ~recv_json~ and ~recv_pyobj~
+  - Serializing functions can be used for customization
+
+** Pub Sub
+  - Publisher sending updates to many Subscribers
+  - Updates categorized
+  - Subscriber can opt on specific updates
+  - Publisher
+  #+BEGIN_SRC python :exports code :tangle pub.py
+     import zmq
+     import time
+     import sys
+
+     port = "5556"
+     if len(sys.argv) > 1:
+         port =  sys.argv[1]
+         int(port)
+
+     context = zmq.Context()
+     socket = context.socket(zmq.PUB)
+     socket.bind("tcp://*:%s" % port)
+     topic = 0
+     while True:
+         topic, now = topic + 1, time.ctime()
+         socket.send_string("1 update {} {}".format(topic, now))
+         socket.send_string("2 update {} {}".format(topic, now))
+         time.sleep(1)
+   #+END_SRC
+
+#+REVEAL: split
+
+   - Subscriber
+   #+BEGIN_SRC python :exports code :tangle sub.py
+     import sys
+     import zmq
+
+     context = zmq.Context()
+     sock = context.socket(zmq.SUB)
+
+     topic = "1"
+     if len(sys.argv) > 1:
+         topic = sys.argv[1]
+     sock.setsockopt_string(zmq.SUBSCRIBE, topic)
+     sock.connect("tcp://127.0.0.1:5556")
+
+     while True:
+         message = sock.recv_string()
+         print(message)
+   #+END_SRC
+
+* Second exercise: Getting temperature
+** Description
+   - Build a temperature server publishing zip codes (9999 to 10005), with temperatures
+   - Then add a subscriber subscribing to a zip code, and calculating the average temperature for the last 5 records
+   - Try to make the client capable to connect to more than one server
+
+** Weather server
+   #+BEGIN_SRC python :exports code :tangle weather_server.py
+     import zmq
+     import random
+     import sys
+     import time
+
+     port = "5556"
+     if len(sys.argv) > 1:
+         port =  sys.argv[1]
+         int(port)
+
+     context = zmq.Context()
+     socket = context.socket(zmq.PUB)
+     socket.bind("tcp://*:%s" % port)
+     while True:
+         topic = random.randrange(9999,10005)
+         messagedata = random.randrange(1,215) - 80
+         socket.send_string("%d %d" % (topic, messagedata))
+         print("%d %d" % (topic, messagedata))
+         time.sleep(1)
+   #+END_SRC
+   
+** Weather client
+   #+BEGIN_SRC python :exports code :tangle weather_client.py
+     import sys
+     import zmq
+
+     port = "5556"
+     if len(sys.argv) > 1:
+         port =  sys.argv[1]
+         int(port)
+    
+     if len(sys.argv) > 2:
+         port1 =  sys.argv[2]
+         int(port1)
+
+     # Socket to talk to server
+     context = zmq.Context()
+     socket = context.socket(zmq.SUB)
+
+     print("Collecting updates from weather server...")
+     socket.connect ("tcp://localhost:%s" % port)
+
+     if len(sys.argv) > 2:
+         socket.connect ("tcp://localhost:%s" % port1)
+
+     # Subscribe to zipcode, default is NYC, 10001
+     topicfilter = "10001"
+     socket.setsockopt_string(zmq.SUBSCRIBE, topicfilter)
+
+     # Process 5 updates
+     total_value = 0
+     for update_nbr in range (5):
+         string = socket.recv()
+         topic, messagedata = string.split()
+         total_value += int(messagedata)
+
+     print("Avg temp for zip '%s' was %dF" % (topicfilter, total_value / update_nbr))
+   #+END_SRC
+* TL;DR
+  - [[http://zguide.zeromq.org/py:all][0MQ - The Guide]]
+  - [[https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/][Learning 0MQ with pyzmq]]

@@ -1,0 +1,16 @@
+section p {
+    text-align: left;
+}
+
+pre#src-python{
+    background-color:black;
+}
+
+.figure p {
+    text-align: center;
+}
+
+section pre {
+    background-color: white;
+    color: black;
+}
