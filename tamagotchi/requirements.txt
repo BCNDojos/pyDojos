@@ -19,7 +19,7 @@ MarkupSafe==0.23
 mistune==0.7.3
 nbconvert==5.0.0
 nbformat==4.2.0
-notebook==4.3.0
+notebook>=5.7.2
 pandocfilters==1.4.1
 parse==1.6.6
 parse-type==0.3.4
