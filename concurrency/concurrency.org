@@ -1,0 +1,554 @@
+#+AUTHOR: Ignasi Fosch
+#+TITLE: Concurrency workshop
+#+REVEAL_ROOT: file:///home/ifosch/src/github.com/hakimel/reveal.js
+#+REVEAL_HLEVEL: 1
+#+REVEAL_EXTRA_CSS: ../dojos.css
+#+REVEAL_TITLE_SLIDE_BACKGROUND: file:///home/ifosch/src/github.com/BCNDojos/pyDojos/concurrency/images/man.jpg
+#+OPTIONS: toc:1
+#+OPTIONS: reveal_progress:t
+#+OPTIONS: reveal_title_slide:"<h1>%t</h1>"
+#+OPTIONS: reveal_width:1200
+#+OPTIONS: reveal_height:800
+#+OPTIONS: num:nil
+#+REVEAL_PLUGINS: (notes)
+
+* What is all this about?
+   :PROPERTIES:
+   :reveal_background: ./images/clock.jpg
+   :reveal_background_trans: slide
+   :END:
+** What is concurrency?
+   - Logic parts executed out-of-order with same results
+   - It has different implementations
+   - Multitasking vs multiprocessing
+   - Preemptive vs cooperative
+#+BEGIN_NOTES
+In computing, refers to different logic being executed out-of-order or in partial order.
+Partial order example would be genealogical descendants, where some are comparable, but not all.
+Systems with >1 CPU can run more than one part at the same exact time, or multiprocess.
+Multitasking can be done with one single CPU, by alternating the parts' instruction being executed on each cycle.
+Power outlet example: With a power strip, multiprocessing can happen; with an outlet, only multitasking can happen.
+When multitasking, preemptive will be kicked out, while cooperative will yield the processor (and resources) to other parts.
+Power outlet example: Preemptive would split outlet's using time, while cooperative would base on battery live.
+#+END_NOTES
+
+** What is parallelism?
+   - Bit-level, Instruction-level, Task parallelism
+   - Very different classes: SMP, distributed computing, Multi-core, ...
+#+BEGIN_NOTES
+Bit-level: Doubling word size, halfs the instructions needed.
+Instruction-level: Multi-stage (IFetch, IDecode, Mem access, Register WB) pipelines, sub/scalar/super and IPC.
+Task parallelism: Different calculations on same or different data. Task, to sub-tasks, then run these on separate processing units.
+#+END_NOTES
+
+** Concurrency or Parallelism?
+   - Concurrency not equal to parallelism
+   - Concurrency > Parallelisma (?)
+   - Concurrency <-x-> Parallelism
+   - Parallelism requires >1 PU
+#+BEGIN_NOTES
+These are not the same.
+Sometimes, but not always, are seen as generalization/specialization.
+Concurrency doesn't imply parallelism, and vice-versa.
+#+END_NOTES
+
+** Concurrency/parallelism issues
+   - Data/resource sharing
+   - Synchronization and communication
+   - Race conditions and mutual exclusion
+   - Parallel slowdown
+#+BEGIN_NOTES
+Data, and other resources are shared, sometimes causing differnt kinds of problems (Dining philosophers, ABA, Smokers, ...)
+The different subtasks/programs may need to handle communication (IPC) to get synced.
+Race conditions appear when resources are accessed and modified in order-relevant steps, making mutual exclusion required.
+Parallel slowdown: Not always more PUs mean more speed. Communications can make thinks slower.
+#+END_NOTES
+
+** Concurrency/parallelism usefulness
+   - CPU bound logic
+   - I/O bound logic
+#+BEGIN_NOTES
+#+END_NOTES
+
+** Python: Remember the GIL
+   - Multitasking is single processor
+   - Only multiprocessing can use more
+#+BEGIN_NOTES
+#+END_NOTES
+
+** 
+   :PROPERTIES:
+   :reveal_background: ./images/Thats_all_folks.svg
+   :reveal_background_trans: slide
+   :END:
+
+* An IO bound process
+   :PROPERTIES:
+   :reveal_background: ./images/io.jpg
+   :reveal_background_trans: slide
+   :END:
+
+** Problem description
+- Code doing mostly requests to other subsystems
+- Such requests take time to complete or to get results
+- Again, lots of values or lots of times, or big or huge values
+#+BEGIN_NOTES
+In this exercise, the program will download content over the network.
+It will be just web pages, but it could be any network traffic.
+#+END_NOTES
+
+*** Synchronous approach
+#+BEGIN_NOTES
+The synchronous implementation does require the ~requests~ module.
+This implementation is not concurrent at all.
+#+END_NOTES
+
+**** ~download.py~:
+#+BEGIN_SRC python :exports :tangle download.py
+import requests
+
+
+def site(url, session):
+    with session.get(url) as response:
+        print('Read {} from {}'.format(len(response.content), url))
+
+
+def all_sites(sites):
+    with requests.Session() as session:
+        for url in sites:
+            site(url, session)
+#+END_SRC
+
+#+BEGIN_NOTES
+The ~site~ function downloads a single site.
+It uses a ~requests.Session~ object to improve its performance.
+The ~all_sites~ function creates the ~Session~ object, and walks through
+the list of sites invoking ~site~.
+#+END_NOTES
+
+**** ~io_bound.py~:
+#+BEGIN_SRC python :exports :tangle io_bound.py
+import time
+import download
+
+
+if __name__ == '__main__':
+    sites = [
+        'http://www.jython.org',
+        'http://olympus.realpython.org/dice',
+    ] * 80
+    start_time = time.time()
+    download.all_sites(sites)
+    print('Downloaded {} in {} seconds'.format(len(sites), time.time() - start_time))
+#+END_SRC
+
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Synchronous approach execution
+#+BEGIN_EXAMPLE
+$ python io_bound.py
+Read 19210 from http://www.jython.org
+Read 276 from http://olympus.realpython.org/dice
+...
+Downloaded 160 in 32.87973928451538 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+This execution shows the multiple downloads happening, and 
+the total time of execution.
+Take note of this time.
+Good points: Easy to write and debug, straight-forward, easy to predict.
+Bad points: Slow.
+Do you need it faster?
+#+END_NOTES
+
+*** Threading approach
+**** ~threading_download.py~:
+#+BEGIN_SRC python :exports :tangle threading_download.py
+import concurrent.futures
+import requests
+import threading
+
+
+thread_local = threading.local()
+
+
+def get_session():
+    if not getattr(thread_local, 'session', None):
+        thread_local.session = requests.Session()
+    return thread_local.session
+
+
+def site(url, session=None):
+    if session is None:
+        session = get_session()
+    with session.get(url) as response:
+        print('Read {} from {}'.format(len(response.content), url))
+
+
+def all_sites(sites):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        executor.map(site, sites)
+#+END_SRC
+
+#+BEGIN_NOTES
+Now ~all_sites~ creates a pool of concurrent threads, controlled by an
+executor, launching each request concurrently. Its ~map~ method runs the
+function on each element of the list.
+Executors are higher-level abstractions of the thread model provided to
+the standard library in Python 3.2.
+This version requires each thread to get a separate Session. But Session is
+not thread-safe, like Queue, but uses locks to ensure single access.
+The threading.local() is thread local storage, i.e. object looking like a
+global but specific to each individual thread. This object will contain the
+session created by the thread during its whole life.
+#+END_NOTES
+
+**** ~io_bound.py~:
+#+BEGIN_SRC python :exports :tangle io_bound_thr.py
+import time
+import threading_download as download
+
+
+if __name__ == '__main__':
+    sites = [
+        'http://www.jython.org',
+        'http://olympus.realpython.org/dice',
+    ] * 80
+    start_time = time.time()
+    download.all_sites(sites)
+    duration = time.time() - start_time
+    print('Downloaded {} in {} seconds'.format(len(sites), time.time() - start_time))
+#+END_SRC
+
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Threading approach execution
+#+BEGIN_EXAMPLE
+$ python io_bound.py
+Read 19210 from http://www.jython.org
+Read 276 from http://olympus.realpython.org/dice
+...
+Downloaded 160 in 7.240019798278809 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+Take note of this time.
+Good points: Fast
+Bad points: A little bit more code and consideration about data. Can be
+hard to predict and detect problems. Race conditions, intermittent bugs.
+(try to use a real global variable).
+#+END_NOTES
+
+*** Multiprocessing approach
+**** ~multiprocessing_download.py~:
+#+BEGIN_SRC python :exports :tangle multiprocessing_download.py
+import requests
+import multiprocessing
+
+
+session = None
+
+
+def set_global_session():
+    global session
+    if not session:
+        session = requests.Session()
+
+
+def site(url):
+    with session.get(url) as response:
+        name = multiprocessing.current_process().name
+        print('{}:Read {} from {}'.format(name, len(response.content), url))
+
+
+def all_sites(sites):
+    with multiprocessing.Pool(initializer=set_global_session) as pool:
+        pool.map(site, sites)
+#+END_SRC
+
+#+BEGIN_NOTES
+Pool of processes, mapping each element in sites to site function.
+session is global. Requests work well here.
+#+END_NOTES
+
+**** ~io_bound.py~:
+#+BEGIN_SRC python :exports :tangle io_bound_mp.py
+import time
+import multiprocessing_download as download
+
+
+if __name__ == '__main__':
+    sites = [
+        'http://www.jython.org',
+        'http://olympus.realpython.org/dice',
+    ] * 80
+    start_time = time.time()
+    download.all_sites(sites)
+    duration = time.time() - start_time
+    print('Downloaded {} in {} seconds'.format(len(sites), time.time() - start_time))
+#+END_SRC
+
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Multiprocessing approach execution
+#+BEGIN_EXAMPLE
+$ python io_bound.py
+Read 19210 from http://www.jython.org
+Read 276 from http://olympus.realpython.org/dice
+...
+Downloaded 160 in 9.157116174697876 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+Take note of this time.
+#+END_NOTES
+
+*** Asyncio approach
+**** ~async_download.py~:
+#+BEGIN_SRC python :exports :tangle async_download.py
+import asyncio
+import aiohttp
+
+
+async def site(session, url):
+    async with session.get(url) as response:
+        print('Read {} from {}'.format(response.content_length, url))
+
+
+def all_sites(sites):
+    async def setup_tasks(sites):
+        async with aiohttp.ClientSession() as session:
+            tasks = []
+            for url in sites:
+                task = asyncio.ensure_future(site(session, url))
+                tasks.append(task)
+            await asyncio.gather(*tasks, return_exceptions=True)
+    asyncio.get_event_loop().run_until_complete(setup_tasks(sites))
+#+END_SRC
+
+#+BEGIN_NOTES
+event_loop: Controls how and when each task gets run, controlling its states.
+async defines coroutines, and await marks steps where the task can be paused.
+#+END_NOTES
+
+**** ~io_bound.py~:
+#+BEGIN_SRC python :exports :tangle io_bound_asy.py
+import time
+import async_download as download
+
+
+if __name__ == '__main__':
+    sites = [
+        'http://www.jython.org',
+        'http://olympus.realpython.org/dice',
+    ] * 80
+    start_time = time.time()
+    download.all_sites(sites)
+    duration = time.time() - start_time
+    print('Downloaded {} in {} seconds'.format(len(sites), time.time() - start_time))
+#+END_SRC
+
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Asyncio approach execution
+#+BEGIN_EXAMPLE
+$ python io_bound.py
+Read 19210 from http://www.jython.org
+Read 276 from http://olympus.realpython.org/dice
+...
+Downloaded 160 in 0.7247786521911621 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+Take note of this time.
+Good points: Fast, really fast, knowledge and understanding tasks exchanging,
+Bad points: The code is more complex, without ThreadPoolExecutor-like, using
+async and await in the right places, special async versions (requests),
+cooperative requires cooperation.
+#+END_NOTES
+
+* A CPU bound process
+   :PROPERTIES:
+   :reveal_background: ./images/cpu_i7.jpg
+   :reveal_background_trans: slide
+   :END:
+
+** Problem description
+- Code doing mostly calculations
+- Complex or big calculations requiring lots of instructions
+- Lots of values or lots of times, or big or huge values
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Synchronous approach
+**** ~sum_squares.py~:
+#+BEGIN_SRC python :exports :tangle sum_squares.py
+def sum_of_squares(number):
+    return sum([i * i for i in range(number)])
+
+
+def find(numbers):
+    for number in numbers:
+        sum_of_squares(number)
+#+END_SRC
+
+#+BEGIN_NOTES
+These two functions will be kept in the sum_squares.py file.
+`sum_of_squares` receives a number and calculates the sum of all this number's squares back to 0.
+This is an example of calculation, not really useful, just for the sake of the exercise.
+`find` is a function iterating over a list of numbers, handling the execution of the previous function.
+#+END_NOTES
+
+**** ~cpu_bound.py~:
+#+BEGIN_SRC python :exports :tangle cpu_bound.py
+import time
+import sum_squares
+
+
+if __name__ == '__main__':
+    numbers = [5000000 + x for x in range(20)]
+
+    start_time = time.time()
+    sum_squares.find(numbers)
+    print('Duration {} seconds'.format(time.time() - start_time))
+#+END_SRC
+
+#+BEGIN_NOTES
+The main program will just drive the whole computation for a list of big numbers.
+It will also measure execution time of the whole calculation.
+#+END_NOTES
+
+*** Synchronous approach execution
+#+BEGIN_EXAMPLE
+$ python cpu_bound.py
+Duration 9.187322854995728 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+Take note of this time.
+#+END_NOTES
+
+*** Threading approach
+**** ~threading_sum_squares.py~:
+#+BEGIN_SRC python :exports :tangle threading_sum_squares.py
+import concurrent.futures
+
+def sum_of_squares(number):
+    return sum([i * i for i in range(number)])
+
+
+def find(numbers):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        executor.map(sum_of_squares, numbers)
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+**** ~cpu_bound.py~:
+#+BEGIN_SRC python :exports :tangle cpu_bound_thr.py
+import time
+import threading_sum_squares as sum_squares
+
+
+if __name__ == '__main__':
+    numbers = [5000000 + x for x in range(20)]
+
+    start_time = time.time()
+    sum_squares.find(numbers)
+    print('Duration {} seconds'.format(time.time() - start_time))
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Threading approach execution
+#+BEGIN_EXAMPLE
+$ python cpu_bound.py
+Duration 9.36528205871583 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Multiprocess approach
+**** ~multiprocess_sum_squares.py~:
+#+BEGIN_SRC python :exports :tangle multiprocess_sum_squares.py
+import multiprocessing
+
+def sum_of_squares(number):
+    return sum([i * i for i in range(number)])
+
+
+def find(numbers):
+    with multiprocessing.Pool() as pool:
+        pool.map(sum_of_squares, numbers)
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+**** ~cpu_bound.py~:
+#+BEGIN_SRC python :exports :tangle cpu_bound_mp.py
+import time
+import multiprocess_sum_squares as sum_squares
+
+
+if __name__ == '__main__':
+    numbers = [5000000 + x for x in range(20)]
+
+    start_time = time.time()
+    sum_squares.find(numbers)
+    print('Duration {} seconds'.format(time.time() - start_time))
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Multiprocess approach execution
+#+BEGIN_EXAMPLE
+$ python cpu_bound.py
+Duration 5.489550829833716
+#+END_EXAMPLE
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Asyncio approach
+**** ~async_sum_squares.py~:
+#+BEGIN_SRC python :exports :tangle async_sum_squares.py
+def sum_of_squares(number):
+    return sum([i * i for i in range(number)])
+
+
+def find(numbers):
+    for number in numbers:
+        sum_of_squares(number)
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+**** ~cpu_bound.py~:
+#+BEGIN_SRC python :exports :tangle cpu_bound_asy.py
+import time
+import sum_squares
+
+
+if __name__ == '__main__':
+    numbers = [5000000 + x for x in range(20)]
+
+    start_time = time.time()
+    sum_squares.find(numbers)
+    print('Duration {} seconds'.format(time.time() - start_time))
+#+END_SRC
+#+BEGIN_NOTES
+#+END_NOTES
+
+*** Asyncio approach execution
+#+BEGIN_EXAMPLE
+$ python cpu_bound.py
+Duration 9.811423778533936 seconds
+#+END_EXAMPLE
+#+BEGIN_NOTES
+#+END_NOTES
+
+* References
+- Speed Up Your Python Program With Concurrency [https://realpython.com/python-concurrency/]
+- Async IO in Python: A Complete Walkthrough [https://realpython.com/async-io-python/]
+- Guido van Rossum on Tulip (Jan 2014) [https://www.youtube.com/watch?v=aurOB4qYuFM]
+- Python Multithreading and Multiprocessing Tutorial [https://www.toptal.com/python/beginners-guide-to-concurrency-and-parallelism-in-python]
+- Concurrency in Python - Introduction [https://www.tutorialspoint.com/concurrency_in_python/concurrency_in_python_quick_guide.htm]
