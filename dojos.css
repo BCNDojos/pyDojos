@@ -1,0 +1,20 @@
+section#sec-title-slide {
+    height: 100%;
+    vertical-align: text-bottom;
+}
+section#sec-title-slide h1 {
+    margin-top: 50%;
+    color: orange;
+}
+section p {
+    text-align: left;
+}
+
+.figure p {
+    text-align: center;
+}
+
+section pre {
+    background-color: white;
+    color: black;
+}
