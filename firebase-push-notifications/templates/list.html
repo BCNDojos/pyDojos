@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+
+{% block head %}
+Token's List
+{% endblock %}
+
+{% block body %}
+    {% for token in token_list %}
+    <span>{{token.token}}</span>
+    {% endfor %}
+
+{% endblock %}
