@@ -103,18 +103,17 @@ app.run()
 
 --
 
-## Defining a route
+## Using Blueprints
 
 <pre><code class="hljs python">
-from flask import Flask, render_template
+from flask import Blueprint, render_template
 
-app = Flask(__name__)
+views = Blueprint('views', __name__)
 
-@app.route('/post', methods=['POST'])
-def post_message():
-    return jsonify({ 'message': 'hi there form a POST call' })
 
-app.run()
+@views.route('/')
+def index():
+    return 'index.html'
 </code></pre>
 
 ---

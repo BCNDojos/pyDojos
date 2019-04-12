@@ -6,10 +6,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notifications.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    from api import api
-    from views import views
-    app.register_blueprint(api)
-    app.register_blueprint(views)
+    # from api import api
+    # from views import views
+    # app.register_blueprint(api)
+    # app.register_blueprint(views)
 
     from models import db
     db.init_app(app)
