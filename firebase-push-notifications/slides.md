@@ -151,11 +151,21 @@ if __name__ == "__main__":
 
 ---
 
-### Pythonanywhere
+## Pythonanywhere
 
 <ul>
+  <li>Generate database</li>
   <li>Serve our web app</li>
   <li>Schedule our notifier.py</li>
 </ul>
 
----
+--
+
+### Generate database
+
+<pre><code>
+>>> import models
+>>> from sqlalchemy import create_engine
+>>> engine = create_engine('sqlite:///notifications.db')
+>>> models.Base.metadata.create_all(engine)
+</code></pre>

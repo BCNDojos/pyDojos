@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, orm
 fcm_url = "https://fcm.googleapis.com/fcm/send"
 headers = {
     "Content-Type": "application/json",
-    "Authorization": "key=your-server-api-key-goes-here"
+    "Authorization": "key=your-key-goes-here"
 }
 data = {
     "notification": {
