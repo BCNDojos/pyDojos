@@ -1,11 +1,11 @@
 // Initialize Firebase
 const config = {
-  apiKey: "your-api-key-goes-here",
+  apiKey: "your-token-goes-here",
   authDomain: "python-april-2019.firebaseapp.com",
   databaseURL: "https://python-april-2019.firebaseio.com",
   projectId: "python-april-2019",
   storageBucket: "python-april-2019.appspot.com",
-  messagingSenderId: "your-message-sender-id-goes-here"
+  messagingSenderId: "your-token-goes-here"
 };
 firebase.initializeApp(config);
 

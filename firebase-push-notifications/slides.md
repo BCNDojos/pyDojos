@@ -7,7 +7,6 @@ slideNumber: true
 ---
 
 <p>SSID: Punt Multimedia Aula 2_4Ghz</p>
-<p>password: puntmultimedia314</p>
 <p>github: https://github.com/BCNDojos/pyDojos.git</p>
 <p>branch: start</p>
 
