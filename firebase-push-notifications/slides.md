@@ -6,6 +6,13 @@ logoImg: "https://raw.githubusercontent.com/evilz/vscode-reveal/master/images/lo
 slideNumber: true
 ---
 
+<p>SSID: Punt Multimedia Aula 2_4Ghz</p>
+<p>password: puntmultimedia314</p>
+<p>github: https://github.com/BCNDojos/pyDojos.git</p>
+<p>branch: start</p>
+
+---
+
 ## April PyBCN Practice Sessions
 
 <span>pythonanywhere.com & firebase push notifications</span>
