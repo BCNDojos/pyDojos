@@ -1,0 +1,13 @@
+type Query {
+  Planet(name: String!): Planet
+}
+
+type Planet {
+  name: String!
+  residents: [Person!]
+}
+
+type Person {
+  name: String!
+  height: Int
+}
